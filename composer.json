@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": "^7.4|8.0",
+        "php": "^7.4|^8.0",
         "brunocfalcao/eduka-cube": "dev-master",
         "brunocfalcao/eduka-nova": "dev-master",
         "brunocfalcao/eduka-maquillage": "dev-master",
