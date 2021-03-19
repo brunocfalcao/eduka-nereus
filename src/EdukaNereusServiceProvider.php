@@ -17,6 +17,7 @@ class EdukaNereusServiceProvider extends EdukaServiceProvider
         $this->loadEdukaViews(__DIR__.'/../resources/views');
         $this->registerCommands();
         $this->publishResources();
+        $this->loadSystemViews();
         $this->loadRoutes();
     }
 
@@ -40,7 +41,6 @@ class EdukaNereusServiceProvider extends EdukaServiceProvider
          * The launched decision is based on the course.launched_at
          * column.
          **/
-
         try {
             $routesPath = optional(Course::active())->is_launched ?
             __DIR__.'/../routes/post-launch.php' :
@@ -55,6 +55,12 @@ class EdukaNereusServiceProvider extends EdukaServiceProvider
                  include $routesPath;
              });
         } catch (\Exception $e) {
+            $routesPath = __DIR__.'/../routes/welcome.php';
+
+            Route::middleware(['web'])
+             ->group(function () use ($routesPath) {
+                 include $routesPath;
+             });
         }
     }
 

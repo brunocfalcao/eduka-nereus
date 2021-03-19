@@ -2,10 +2,11 @@
 
 namespace Eduka\Nereus\Commands;
 
-use Eduka\Abstracts\EdukaCommand;
-use Eduka\Cube\Models\Course;
 use Eduka\Cube\Models\User;
 use Illuminate\Support\Str;
+use Eduka\Cube\Models\Course;
+use Eduka\Abstracts\EdukaCommand;
+use Illuminate\Support\Facades\DB;
 
 final class Install extends EdukaCommand
 {
@@ -68,11 +69,7 @@ final class Install extends EdukaCommand
 
         $this->createAdminUser();
 
-        $this->paragraph('These queue names need to be active for eduka to work:', false);
-
-        $this->paragraph('IP Blacklist check queue => '.queue_name('ip-blacklist-check'));
-
-        $this->paragraph('IP Geodata retrieval => '.queue_name('geoip-data'));
+        $this->paragraph('WARNING: Please ensure you have the ENV variable REDIS_QUEUE configured!', false);
 
         $this->paragraph('-= ALL GOOD! Go and create that awesome course! =-', false, false);
 
