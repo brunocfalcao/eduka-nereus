@@ -58,6 +58,8 @@ final class Install extends EdukaCommand
 
         $this->publishEdukaResources();
 
+        $this->replaceJsonDataTypesToLongText();
+
         $this->migrateFresh();
 
         $this->createStorageLink();
@@ -82,6 +84,8 @@ final class Install extends EdukaCommand
         $this->paragraph('Delete storage public directories (if they exist)...');
 
         $this->rrmdir(storage_path('app/public'));
+
+        mkdir(storage_path('app/public'));
 
         $this->paragraph('Storage public directories deleted okay!', false);
     }
@@ -202,6 +206,18 @@ final class Install extends EdukaCommand
         ]);
 
         $this->paragraph('3rd party packages resources okay!', false);
+    }
+
+    protected function replaceJsonDataTypesToLongText()
+    {
+        // Delete previous create_media_file migrations.
+        foreach (glob(database_path('migrations/*.php')) as $filename) {
+            $file = file_get_contents($filename);
+
+            $data = str_replace('->json(', '->longText(', $file);
+
+            file_put_contents($filename, $data);
+        }
     }
 
     protected function preChecks()
