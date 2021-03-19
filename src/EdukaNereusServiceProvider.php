@@ -41,9 +41,13 @@ class EdukaNereusServiceProvider extends EdukaServiceProvider
          * The launched decision is based on the course.launched_at
          * column.
          **/
-        $routesPath = optional(Course::active())->is_launched ?
+
+        try {
+            $routesPath = optional(Course::active())->is_launched ?
             __DIR__.'/../routes/post-launch.php' :
             __DIR__.'/../routes/pre-launch.php';
+        } catch (\Exception $e) {
+        }
 
         Route::middleware(['web',
                            IpTracing::class,
