@@ -2,14 +2,13 @@
 
 namespace Eduka\Nereus;
 
+use Eduka\Abstracts\EdukaServiceProvider;
+use Eduka\Analytics\Middleware\IpTracing;
+use Eduka\Analytics\Middleware\VisitorTracing;
+use Eduka\Analytics\Middleware\VisitTracing;
 use Eduka\Cube\Models\Course;
 use Eduka\Nereus\Commands\Install;
 use Illuminate\Support\Facades\Route;
-use Eduka\Abstracts\EdukaServiceProvider;
-use Eduka\Analytics\Middleware\IpTracing;
-use Eduka\Analytics\Middleware\VisitTracing;
-use Eduka\Analytics\Middleware\VisitorTracing;
-use Eduka\Analytics\Middleware\LifecycleTracing;
 
 class EdukaNereusServiceProvider extends EdukaServiceProvider
 {
@@ -37,7 +36,7 @@ class EdukaNereusServiceProvider extends EdukaServiceProvider
             $this->loadRoutesFrom(__DIR__.'/../routes/tests.php');
         }
 
-        /**
+        /*
          * The launched decision is based on the course.launched_at
          * column.
          **/
@@ -46,10 +45,8 @@ class EdukaNereusServiceProvider extends EdukaServiceProvider
             $routesPath = optional(Course::active())->is_launched ?
             __DIR__.'/../routes/post-launch.php' :
             __DIR__.'/../routes/pre-launch.php';
-        } catch (\Exception $e) {
-        }
 
-        Route::middleware(['web',
+            Route::middleware(['web',
                            IpTracing::class,
                            VisitorTracing::class,
                            VisitTracing::class,
@@ -57,6 +54,8 @@ class EdukaNereusServiceProvider extends EdukaServiceProvider
              ->group(function () use ($routesPath) {
                  include $routesPath;
              });
+        } catch (\Exception $e) {
+        }
     }
 
     protected function publishResources()
