@@ -36,6 +36,41 @@ class EdukaNereusServiceProvider extends EdukaServiceProvider
     {
         $this->loadTestRoutes();
 
+        $this->loadCourseRoutes();
+
+        $this->loadSystemRoutes();
+    }
+
+    protected function publishResources()
+    {
+        $this->publishes([
+            __DIR__.'/../resources/overrides/' => base_path('/'),
+        ]);
+    }
+
+    protected function registerCommands(): void
+    {
+        $this->app->bind('command.eduka:install', Install::class);
+
+        $this->commands([
+            'command.eduka:install',
+        ]);
+    }
+
+    protected function loadTestRoutes()
+    {
+        /*
+         * The test routes are only loaded in case we are not in a
+         * production environment. You are free to load your own
+         * test routes on your course service provider.
+         **/
+        if (app()->environment() != 'production') {
+            $this->loadRoutesFrom(__DIR__.'/../routes/tests.php');
+        }
+    }
+
+    protected function loadCourseRoutes()
+    {
         // Do we have a course that is not deleted?
         if (Course::exists()) {
             /*
@@ -66,43 +101,15 @@ class EdukaNereusServiceProvider extends EdukaServiceProvider
                     include $routesPath;
                  });
         }
+    }
 
-        /**
-         * Load system routes. For e.g. postmark inbound emails.
-         **/
+    protected function loadSystemRoutes()
+    {
         $systemRoutesPath = __DIR__.'/../routes/system.php';
 
         Route::middleware([IpTracing::class])
              ->group(function () use ($systemRoutesPath) {
                 include $systemRoutesPath;
              });
-    }
-
-    protected function publishResources()
-    {
-        $this->publishes([
-            __DIR__.'/../resources/overrides/' => base_path('/'),
-        ]);
-    }
-
-    protected function registerCommands(): void
-    {
-        $this->app->bind('command.eduka:install', Install::class);
-
-        $this->commands([
-            'command.eduka:install',
-        ]);
-    }
-
-    protected function loadTestRoutes()
-    {
-        /*
-         * The test routes are only loaded in case we are not in a
-         * production environment. You are free to load your own
-         * test routes on your course service provider.
-         **/
-        if (app()->environment() != 'production') {
-            $this->loadRoutesFrom(__DIR__.'/../routes/tests.php');
-        }
     }
 }
