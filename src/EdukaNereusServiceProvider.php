@@ -2,13 +2,14 @@
 
 namespace Eduka\Nereus;
 
-use Eduka\Abstracts\EdukaServiceProvider;
-use Eduka\Analytics\Middleware\IpTracing;
-use Eduka\Analytics\Middleware\VisitorTracing;
-use Eduka\Analytics\Middleware\VisitTracing;
 use Eduka\Cube\Models\Course;
 use Eduka\Nereus\Commands\Install;
 use Illuminate\Support\Facades\Route;
+use Eduka\Abstracts\EdukaServiceProvider;
+use Eduka\Analytics\Middleware\IpTracing;
+use Eduka\Analytics\Middleware\GoalsTracing;
+use Eduka\Analytics\Middleware\VisitTracing;
+use Eduka\Analytics\Middleware\VisitorTracing;
 
 class EdukaNereusServiceProvider extends EdukaServiceProvider
 {
