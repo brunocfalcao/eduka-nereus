@@ -2,14 +2,14 @@
 
 namespace Eduka\Nereus;
 
+use Eduka\Abstracts\EdukaServiceProvider;
+use Eduka\Analytics\Middleware\GoalsTracing;
+use Eduka\Analytics\Middleware\IpTracing;
+use Eduka\Analytics\Middleware\VisitorTracing;
+use Eduka\Analytics\Middleware\VisitTracing;
 use Eduka\Cube\Models\Course;
 use Eduka\Nereus\Commands\Install;
 use Illuminate\Support\Facades\Route;
-use Eduka\Abstracts\EdukaServiceProvider;
-use Eduka\Analytics\Middleware\IpTracing;
-use Eduka\Analytics\Middleware\GoalsTracing;
-use Eduka\Analytics\Middleware\VisitTracing;
-use Eduka\Analytics\Middleware\VisitorTracing;
 
 class EdukaNereusServiceProvider extends EdukaServiceProvider
 {
@@ -87,7 +87,7 @@ class EdukaNereusServiceProvider extends EdukaServiceProvider
                    VisitTracing::class,
                    GoalsTracing::class, ])
                  ->group(function () use ($routesPath) {
-                    include $routesPath;
+                     include $routesPath;
                  });
         } else {
             /**
@@ -98,7 +98,7 @@ class EdukaNereusServiceProvider extends EdukaServiceProvider
 
             Route::middleware(['web'])
                  ->group(function () use ($routesPath) {
-                    include $routesPath;
+                     include $routesPath;
                  });
         }
     }
@@ -109,7 +109,7 @@ class EdukaNereusServiceProvider extends EdukaServiceProvider
 
         Route::middleware([IpTracing::class])
              ->group(function () use ($systemRoutesPath) {
-                include $systemRoutesPath;
+                 include $systemRoutesPath;
              });
     }
 }

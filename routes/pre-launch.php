@@ -1,6 +1,6 @@
 <?php
 
-use Eduka\Nereus\Controllers\Tests\PostsController;
+use Eduka\Nereus\Controllers\PreLaunch\PreLaunchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,12 +12,13 @@ use Eduka\Nereus\Controllers\Tests\PostsController;
 | - The pre-launch homepage route
 | - The new subcription route
 |
+| Route example:
+| Route::get('/posts/{post}/comments/{comment}', [PostsController::class, 'subscribe']);
 */
 
-/*
- * The pre-launch welcome page. When you are still in a pre-launch phase
- * this should be your main view.
- **/
-Route::view('/', 'eduka::pre-launch.welcome');
+// Default welcome page.
+Route::get('/', [PreLaunchController::class, 'welcome'])
+     ->name('pre-launch.welcome');
 
-Route::get('/posts/{post}/comments/{comment}', [PostsController::class, 'subscribe']);
+Route::post('/', [PreLaunchController::class, 'subscribe'])
+     ->name('pre-launch.subscribe');

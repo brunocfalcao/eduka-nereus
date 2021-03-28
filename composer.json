@@ -20,7 +20,8 @@
         "brunocfalcao/eduka-cube": "dev-master",
         "brunocfalcao/eduka-nova": "dev-master",
         "brunocfalcao/eduka-maquillage": "dev-master",
-        "brunocfalcao/eduka-analytics": "dev-master"
+        "brunocfalcao/eduka-analytics": "dev-master",
+        "spatie/laravel-honeypot": "^3.0"
     },
     "autoload": {
         "psr-4": {

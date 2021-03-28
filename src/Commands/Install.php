@@ -2,11 +2,10 @@
 
 namespace Eduka\Nereus\Commands;
 
+use Eduka\Abstracts\EdukaCommand;
+use Eduka\Cube\Models\Course;
 use Eduka\Cube\Models\User;
 use Illuminate\Support\Str;
-use Eduka\Cube\Models\Course;
-use Eduka\Abstracts\EdukaCommand;
-use Illuminate\Support\Facades\DB;
 
 final class Install extends EdukaCommand
 {
