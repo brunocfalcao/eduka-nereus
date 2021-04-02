@@ -5,7 +5,6 @@ namespace Eduka\Nereus;
 use Eduka\Abstracts\EdukaServiceProvider;
 use Eduka\Analytics\Middleware\GoalsTracing;
 use Eduka\Analytics\Middleware\IpTracing;
-use Eduka\Analytics\Middleware\VisitorTracing;
 use Eduka\Analytics\Middleware\VisitTracing;
 use Eduka\Cube\Models\Course;
 use Eduka\Nereus\Commands\Install;
@@ -83,7 +82,6 @@ class EdukaNereusServiceProvider extends EdukaServiceProvider
 
             Route::middleware(['web',
                    IpTracing::class,
-                   VisitorTracing::class,
                    VisitTracing::class,
                    GoalsTracing::class, ])
                  ->group(function () use ($routesPath) {
