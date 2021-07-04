@@ -64,8 +64,6 @@ final class Install extends EdukaCommand
 
         $this->createStorageLink();
 
-        $this->createCourse();
-
         $this->createAdminUser();
 
         $this->paragraph('WARNING: Please ensure you have the ENV variable REDIS_QUEUE configured!', false);
@@ -95,22 +93,6 @@ final class Install extends EdukaCommand
         $this->call('storage:link');
 
         $this->paragraph('Storate linkage okay!', false);
-    }
-
-    protected function createCourse()
-    {
-        $this->paragraph('Creating course...', false);
-
-        $course = Course::create([
-            'name' => env('APP_NAME'),
-            'admin_email' => env('MAIL_FROM_ADDRESS'),
-        ]);
-
-        $course->addMedia(public_path('images/logo.jpg'))
-               ->preservingOriginal()
-               ->toMediaCollection('logo');
-
-        $this->paragraph('Course creation okay!', false);
     }
 
     protected function createAdminUser()

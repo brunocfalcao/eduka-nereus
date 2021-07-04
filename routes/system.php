@@ -1,6 +1,5 @@
 <?php
 
-use Eduka\Nereus\Controllers\PostmarkController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -10,4 +9,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/inbound', [PostmarkController::class, 'inbound']);
+//Route::post('/inbound', [PostmarkController::class, 'inbound']);
