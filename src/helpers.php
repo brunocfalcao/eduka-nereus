@@ -1,8 +1,6 @@
 <?php
 
-use Eduka\Cube\Services\Course;
-
-function course()
+function course_config(string $path)
 {
-    return new Course();
+    return config(config('eduka-nereus.course').'.'.$path);
 }

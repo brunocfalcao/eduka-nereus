@@ -1,9 +1,3 @@
-/* --- Classes used for debugging purposes --- */
-.outline {
-	outline: 1px dashed red;
-}
-
-.outline-all * {
-	outline: 1px dashed red;
-}
-/* --- /end --- */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

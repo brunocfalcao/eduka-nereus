@@ -2,12 +2,11 @@
 
 namespace Eduka\Nereus\Controllers\PreLaunch;
 
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Eduka\Cube\Models\Subscriber;
 use Eduka\Cube\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class PreLaunchController extends Controller
 {
@@ -21,21 +20,25 @@ class PreLaunchController extends Controller
         // Testing purposes.
         if (app()->environment() != 'production') {
             User::where('email', 'bruno.falcao@live.com')->forceDelete();
+            Subscriber::where('email', 'bruno.falcao@live.com')->forceDelete();
         }
 
-        $validatedData = $request->validateWithBag($request->input('bag'), [
-            'email' => 'required|email:rfc,dns|unique:Eduka\Cube\Models\User,email',
+        $request->validate([
+            'email' => 'required|email:rfc,dns|unique:Eduka\Cube\Models\Subscriber,email',
         ]);
 
-        // Create user and send email.
-        $user = User::create(['name' => null,
-                              'email' => strtolower($request->input('email')),
-                              'password' => bcrypt(Str::random(20)),
-                              'uuid' => (string) Str::uuid(), ]);
+        // Create subscriber.
+        $subscriber = Subscriber::create([
+            'name' => null,
+            'email' => strtolower($request->input('email')),
+        ]);
+
+        // Send subscribed email.
+        $mailable = course_config('mail.subscribed');
 
         Mail::to($request->input('email'))
-            ->send(new ThanksForSubscribing($user));
+            ->send(new $mailable($subscriber));
 
-        return view('welcome');
+        return view('site::prelaunched.default');
     }
 }

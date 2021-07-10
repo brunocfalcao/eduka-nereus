@@ -5,7 +5,6 @@ namespace Eduka\Nereus\Commands;
 use Eduka\Abstracts\EdukaCommand;
 use Eduka\Cube\Models\Course;
 use Eduka\Cube\Models\User;
-use Illuminate\Support\Str;
 
 final class Install extends EdukaCommand
 {
@@ -14,7 +13,7 @@ final class Install extends EdukaCommand
      *
      * @var string
      */
-    protected $signature = 'eduka:install';
+    protected $signature = 'eduka:install {--with-test-data : Install with testing data}';
 
     /**
      * The console command description.
@@ -50,9 +49,18 @@ final class Install extends EdukaCommand
 
         $this->paragraph('-= Eduka installation =-', false);
 
-        $this->preChecks();
+        // Clear framework cache.
+        $this->call('optimize:clear');
+        $this->call('view:clear');
+        $this->call('key:generate');
+
+        if (! $this->preChecks()) {
+            return;
+        }
 
         $this->deleteStorageDirectories();
+
+        $this->createStorageLink();
 
         $this->publish3rdPartyResources();
 
@@ -62,11 +70,7 @@ final class Install extends EdukaCommand
 
         $this->migrateFresh();
 
-        $this->createStorageLink();
-
         $this->createAdminUser();
-
-        $this->paragraph('WARNING: Please ensure you have the ENV variable REDIS_QUEUE configured!', false);
 
         $this->paragraph('-= ALL GOOD! Go and create that awesome course! =-', false, false);
 
@@ -75,54 +79,53 @@ final class Install extends EdukaCommand
 
     protected function deleteStorageDirectories()
     {
-        $this->paragraph('Delete storage public directories (if they exist)...');
+        $this->paragraph('=> Deleting storage public directories (if they exist)...', false);
 
         $this->rrmdir(storage_path('app/public'));
 
         mkdir(storage_path('app/public'));
-
-        $this->paragraph('Storage public directories deleted okay!', false);
     }
 
     protected function createStorageLink()
     {
-        $this->paragraph('Creating storage link...');
+        $this->paragraph('=> Creating storage link...');
 
         // Delete storage if it exists.
         @rmdir(public_path('storage'));
-        $this->call('storage:link');
 
-        $this->paragraph('Storate linkage okay!', false);
+        $this->call('storage:link');
     }
 
     protected function createAdminUser()
     {
-        $this->paragraph('Creating admin user...', false);
-
-        $password = app()->environment() != 'production' ? 'password' : (string) Str::random(10);
+        $this->paragraph('=> Creating eduka admin user...', false);
 
         $admin = User::create([
-            'name' => env('MAIL_FROM_NAME'),
-            'email' => env('MAIL_FROM_ADDRESS'),
+            'name' => env('EDUKA_ADMIN_NAME'),
+            'email' => env('EDUKA_ADMIN_ADDRESS'),
             'email_verified_at' => now(),
-            'password' => bcrypt($password),
+            'password' => bcrypt(env('EDUKA_ADMIN_PASSWORD')),
         ]);
 
-        $this->paragraph('Admin user creation okay (email: '.env('MAIL_FROM_ADDRESS').' password: '.$password.')!', false);
+        $this->paragraph('=> Admin user created (' . env('EDUKA_ADMIN_ADDRESS') . ', ' . env('EDUKA_ADMIN_PASSWORD') . ')');
     }
 
     protected function migrateFresh()
     {
-        $this->paragraph('Freshing database...');
+        $this->paragraph('=> Creating Eduka database schema + seeding initial data + optional test data...', false);
 
-        $this->call('migrate:fresh');
-
-        $this->paragraph('Database migration ran okay!', false);
+        if ($this->option('with-test-data')) {
+            $this->call('eduka:fresh-seed', [
+                '--with-test-data' => true,
+            ]);
+        } else {
+            $this->call('eduka:fresh-seed');
+        }
     }
 
     protected function publishEdukaResources()
     {
-        $this->paragraph('Publishing eduka packages resources...');
+        $this->paragraph('=> Publishing eduka packages assets...');
 
         /*
          * Eduka packages
@@ -148,20 +151,13 @@ final class Install extends EdukaCommand
 
         $this->call('vendor:publish', [
             '--force' => true,
-            '--provider' => 'Eduka\\Maquillage\\EdukaMaquillageServiceProvider',
-        ]);
-
-        $this->call('vendor:publish', [
-            '--force' => true,
             '--provider' => 'Eduka\\Nova\\EdukaNovaServiceProvider',
         ]);
-
-        $this->paragraph('Eduka packages resources okay!', false);
     }
 
     protected function publish3rdPartyResources()
     {
-        $this->paragraph('Publishing 3rd party package resources...');
+        $this->paragraph('=> Publishing 3rd party package resources...');
 
         /*
          * 3rd party packages:
@@ -182,12 +178,12 @@ final class Install extends EdukaCommand
             '--force' => true,
             '--provider' => 'Spatie\\MediaLibrary\\MediaLibraryServiceProvider',
         ]);
-
-        $this->paragraph('3rd party packages resources okay!', false);
     }
 
     protected function replaceJsonDataTypesToLongText()
     {
+        $this->paragraph('=> Replacing json migration datatypes by longTexts (for maria db compatibility)...', false);
+
         // Delete previous create_media_file migrations.
         foreach (glob(database_path('migrations/*.php')) as $filename) {
             $file = file_get_contents($filename);
@@ -200,42 +196,76 @@ final class Install extends EdukaCommand
 
     protected function preChecks()
     {
-        $this->paragraph('Running pre-checks...');
+        $this->paragraph('Running pre-checks...', false);
 
-        // Logo for emails (logo.jpg) image in the public/images folder?
-        if (! file_exists(public_path('images/logo.jpg'))) {
-            return $this->error('Please upload your logo for emails image, 1200x600, JPG, in /public/images/logo.jpg');
+        /**
+         * To initialize the schema initialization seeder, there should be
+         * registered the following environment variables:
+         * EDUKA_ADMIN_NAME
+         * EDUKA_ADMIN_ADDRESS
+         * EDUKA_ADMIN_PASSWORD
+         * EDUKA_COURSE_NAME.
+         *
+         * This information is used to create the admin user in the database
+         * and a course stub. This course stub cannot be deleted, should be
+         * changed to the real course. The same for the admin user.
+         **/
+
+        /**
+         * Quick ENV key/values validation.
+         * key name => type
+         * type can be:
+         *   null (should exist, any value allowed)
+         *   a value (equal to that value).
+         */
+        $shouldBeFilled = collect([
+            'APP_NAME' => null,
+            'EDUKA_ADMIN_NAME' => null,
+            'EDUKA_ADMIN_ADDRESS' => null,
+            'EDUKA_ADMIN_PASSWORD' => null,
+            'MAIL_FROM_ADDRESS' => null,
+            'MAIL_FROM_NAME' => null,
+            'MAIL_MAILER' => 'postmark',
+            'POSTMARK_TOKEN' => null,
+            'QUEUE_CONNECTION' => 'redis',
+            'CACHE_DRIVER' => 'redis',
+            'REDIS_QUEUE' => null,
+        ]);
+
+        $result = $shouldBeFilled->every(function ($value, $key) {
+            if (empty($value)) {
+                return ! empty(env($key));
+            }
+
+            if (! empty($value)) {
+                return env($key) == $value;
+            }
+        });
+
+        if (! $result) {
+            return $this->error("You are missing information your .env file. Please verify the following keys: 
+                env('APP_NAME')
+                env('EDUKA_ADMIN_NAME')
+                env('EDUKA_ADMIN_ADDRESS')
+                env('EDUKA_ADMIN_PASSWORD')
+                env('MAIL_FROM_ADDRESS')
+                env('MAIL_FROM_NAME')
+                env('POSTMARK_TOKEN')
+                env('REDIS_QUEUE')
+                env('MAIL_MAILER') = postmark
+                env('QUEUE_CONNECTION') = redis
+                env('CACHE_DRIVER') = redis");
         }
 
         if (env('APP_NAME') == 'Laravel') {
-            return $this->error('Please rename your .ENV APP_NAME with your course name');
+            return $this->error('Please rename your .ENV APP_NAME with your course name. Cannot be Laravel');
         }
 
-        if (env('MAIL_MAILER') != 'postmark') {
-            return $this->error('Please check your .ENV MAIL_MAILER that should be equal to postmark');
+        if (! class_exists('\App\Providers\NovaServiceProvider')) {
+            return $this->error('Please install Nova before running Eduka');
         }
 
-        if (is_null(env('MAIL_FAKE'))) {
-            return $this->error('Please check your .ENV MAIL_FAKE that should be equal 1 or 0');
-        }
-
-        if (is_null(env('POSTMARK_TOKEN'))) {
-            return $this->error('Please check your .ENV POSTMARK_TOKEN that cannot be null');
-        }
-
-        if (is_null(env('MAIL_FROM_ADDRESS'))) {
-            return $this->error('Please check your .ENV MAIL_FROM_ADDRESS that cannot be null');
-        }
-
-        if (is_null(env('MAIL_FROM_NAME'))) {
-            return $this->error('Please check your .ENV MAIL_FROM_NAME that cannot be null');
-        }
-
-        if (is_null(env('QUEUE_CONNECTION'))) {
-            return $this->error('Please check your .ENV QUEUE_CONNECTION that should be redis');
-        }
-
-        $this->paragraph('Pre-checks okay!', false, false);
+        return true;
     }
 
     private function rrmdir($dir)

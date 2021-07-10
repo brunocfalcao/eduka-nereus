@@ -2,15 +2,15 @@
 
 namespace Eduka\Nereus;
 
+use Eduka\Abstracts\EdukaServiceProvider;
+use Eduka\Analytics\Middleware\GoalsTracing;
+use Eduka\Analytics\Middleware\IpTracing;
+use Eduka\Analytics\Middleware\VisitTracing;
 use Eduka\Cube\Models\Course;
 use Eduka\Nereus\Commands\Install;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
-use Eduka\Abstracts\EdukaServiceProvider;
-use Eduka\Analytics\Middleware\IpTracing;
 use ImLiam\BladeHelper\Facades\BladeHelper;
-use Eduka\Analytics\Middleware\GoalsTracing;
-use Eduka\Analytics\Middleware\VisitTracing;
 
 class EdukaNereusServiceProvider extends EdukaServiceProvider
 {
@@ -38,11 +38,11 @@ class EdukaNereusServiceProvider extends EdukaServiceProvider
 
     protected function loadRoutes()
     {
-        $this->loadTestRoutes();
-
-        $this->loadCourseRoutes();
-
-        $this->loadSystemRoutes();
+        if (course()) {
+            $this->loadTestRoutes();
+            $this->loadCourseRoutes();
+            $this->loadSystemRoutes();
+        }
     }
 
     protected function publishResources()
@@ -77,21 +77,12 @@ class EdukaNereusServiceProvider extends EdukaServiceProvider
 
     protected function loadCourseRoutes()
     {
-        /*
-         * The 'is launched?' decision is based on the course.launched_at
-         * column.
-         **/
         $routesPath = __DIR__.'/../routes/course.php';
 
         Route::middleware(['web',
                IpTracing::class,
                VisitTracing::class,
                GoalsTracing::class, ])
-             ->group(function () use ($routesPath) {
-                 include $routesPath;
-             });
-
-        Route::middleware(['web'])
              ->group(function () use ($routesPath) {
                  include $routesPath;
              });
@@ -109,21 +100,21 @@ class EdukaNereusServiceProvider extends EdukaServiceProvider
 
     protected function registerBladeDirectives()
     {
-        /**
+        /*
          * @image_placeholder_url($width, $height = null, $text = null, $backgroundColor = null)
          */
         BladeHelper::directive('image_placeholder_url', function ($width, $height = null, $text = null, $background = null) {
             return "https://via.placeholder.com/{$width}x{$height}/{$background}?text={$text}";
         });
 
-        /**
+        /*
          * @htmlentities('Bruno Falcão')
          */
         BladeHelper::directive('htmlentities', function ($value) {
             return htmlentities($value);
         });
 
-        /**
+        /*
          * @routename('comments.save')
          */
         Blade::if('routename', function ($name) {

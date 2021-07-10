@@ -1,6 +1,6 @@
 <?php
 
-use Eduka\Cube\Services\Course;
+use Eduka\Cube\Models\Course;
 use Eduka\Nereus\Controllers\PreLaunch\PreLaunchController;
 use Eduka\Nereus\Controllers\PreLaunch\SubscriptionController;
 
@@ -11,23 +11,24 @@ use Eduka\Nereus\Controllers\PreLaunch\SubscriptionController;
 |
 */
 
-if (!Course::active()) {
-     // Meaning the course (pre-launch or launch) are not active at all.
-     Route::view('/', 'site::inactive.default');
+if (! course()->is_active) {
+    // Meaning the course (pre-launch or launch) are not active at all.
+    Route::view('/', 'eduka::inactive.default');
 }
 
-if (Course::launched()) {
-     // Meaning we are in full launch mode.
-     Route::view('/', 'site::launched.default');
+if (course()->launched()) {
+    // Meaning we are in full launch mode.
+    Route::view('/', 'site::launched.default');
 }
 
-if (!Course::launched()) {
-     // Meaning we are in pre-launch mode.
-     Route::view('/', 'site::prelaunched.default');
-     
-     // When you subscribe a new email.
-     Route::post('/', [PreLaunchController::class, 'subscribe'])
-          ->name('subscribe');
+if (course()->is_active && ! course()->launched()) {
+    // Meaning we are in prelaunched mode.
+    Route::view('/', 'site::prelaunched.default')
+          ->name('prelaunched.welcome');
+
+    // When you a new subscription happens.
+    Route::post('/', [PreLaunchController::class, 'subscribe'])
+          ->name('prelaunched.subscribe');
 }
 
 /*
