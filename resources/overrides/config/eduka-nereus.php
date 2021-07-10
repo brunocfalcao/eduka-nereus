@@ -2,11 +2,8 @@
 
 return [
 
-    /*
-    |--------------------------------------------------------------------------
-    | Your course class config name.
-    |--------------------------------------------------------------------------
-    |
-    */
-    'course' => 'nova-advanced-ui',
+    'mail' => [
+        'subscribed' => \Eduka\NovaAdvancedUI\Mail\ThankYouForSubscribing::class,
+    ]
+
 ];

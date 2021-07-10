@@ -19,10 +19,9 @@
         "php": "^7.4|^8.0",
         "brunocfalcao/eduka-cube": "dev-master",
         "brunocfalcao/eduka-nova": "dev-master",
-        "brunocfalcao/eduka-maquillage": "dev-master",
         "brunocfalcao/eduka-analytics": "dev-master",
-        "spatie/laravel-honeypot": "^3.0",
-        "imliam/laravel-blade-helper": "^1.4"        
+        "imliam/laravel-blade-helper": "^1.4",
+        "wildbit/swiftmailer-postmark": "^3.3"               
     },
     "autoload": {
         "psr-4": {
