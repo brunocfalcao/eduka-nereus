@@ -1,6 +1,8 @@
 <?php
 
+use App\Mail\NoWorriesMail;
 use Eduka\NovaAdvancedUI\Mail\ThankYouForSubscribing;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -10,6 +12,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+/*
 Route::get('/mail', function () {
-    return new ThankYouForSubscribing();
+
+    Mail::to('bruno.falcao@live.com')
+        ->send(new ThankYouForSubscribing());
 });
+*/

@@ -5,11 +5,20 @@ namespace Eduka\Nereus\Controllers\PreLaunch;
 use App\Http\Controllers\Controller;
 use Eduka\Cube\Models\Subscriber;
 use Eduka\Cube\Models\User;
+use Eduka\NovaAdvancedUI\Mail\ThankYouForSubscribing;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class PreLaunchController extends Controller
 {
+    public function __construct()
+    {
+        if (app()->environment() == 'production') {
+            $this->middleware(['throttle:2,1'])
+                 ->only(['subscribe']);
+        }
+    }
+
     public function welcome()
     {
         return view('site::prelaunch');
@@ -34,10 +43,10 @@ class PreLaunchController extends Controller
         ]);
 
         // Send subscribed email.
-        $mailable = course_config('mail.subscribed');
+        //$mailable = config('eduka-nereus.mail.subscribed');
 
         Mail::to($request->input('email'))
-            ->send(new $mailable($subscriber));
+            ->send(new ThankYouForSubscribing());
 
         return view('site::prelaunched.default');
     }

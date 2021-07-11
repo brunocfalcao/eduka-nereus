@@ -28,7 +28,7 @@ if (course()->is_active && ! course()->launched()) {
 
     // When you a new subscription happens.
     Route::post('/', [PreLaunchController::class, 'subscribe'])
-          ->name('prelaunched.subscribe');
+          ->name('prelaunched.subscribed');
 }
 
 /*

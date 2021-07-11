@@ -107,7 +107,7 @@ final class Install extends EdukaCommand
             'password' => bcrypt(env('EDUKA_ADMIN_PASSWORD')),
         ]);
 
-        $this->paragraph('=> Admin user created (' . env('EDUKA_ADMIN_ADDRESS') . ', ' . env('EDUKA_ADMIN_PASSWORD') . ')');
+        $this->paragraph('=> Admin user created ('.env('EDUKA_ADMIN_ADDRESS').', '.env('EDUKA_ADMIN_PASSWORD').')');
     }
 
     protected function migrateFresh()
