@@ -10,6 +10,7 @@ use Eduka\Cube\Models\Course;
 use Eduka\Nereus\Commands\Install;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 use ImLiam\BladeHelper\Facades\BladeHelper;
 
 class EdukaNereusServiceProvider extends EdukaServiceProvider
@@ -77,15 +78,17 @@ class EdukaNereusServiceProvider extends EdukaServiceProvider
 
     protected function loadCourseRoutes()
     {
-        $routesPath = __DIR__.'/../routes/course.php';
+        if (Schema::hasTable('course')) {
+            $routesPath = __DIR__.'/../routes/course.php';
 
-        Route::middleware(['web',
+            Route::middleware(['web',
                IpTracing::class,
                VisitTracing::class,
                GoalsTracing::class, ])
              ->group(function () use ($routesPath) {
                  include $routesPath;
              });
+        }
     }
 
     protected function loadSystemRoutes()

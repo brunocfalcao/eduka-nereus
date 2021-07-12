@@ -1,6 +1,5 @@
 <?php
 
-use App\Mail\NoWorriesMail;
 use Eduka\NovaAdvancedUI\Mail\ThankYouForSubscribing;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
