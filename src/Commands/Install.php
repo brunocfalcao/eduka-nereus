@@ -80,14 +80,14 @@ final class Install extends EdukaCommand
     {
         $this->paragraph('=> Deleting App/Models directory (if exist)...', false);
 
-        $this->rrmdir(app_path('Models'));
+        @$this->rrmdir(app_path('Models'));
     }
 
     protected function deleteStorageDirectories()
     {
         $this->paragraph('=> Deleting storage public directories (if they exist)...', false);
 
-        $this->rrmdir(storage_path('app/public'));
+        @$this->rrmdir(storage_path('app/public'));
 
         mkdir(storage_path('app/public'));
     }
