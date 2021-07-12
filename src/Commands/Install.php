@@ -58,6 +58,8 @@ final class Install extends EdukaCommand
             return;
         }
 
+        $this->deleteModelsDefaultFolder();
+
         $this->deleteStorageDirectories();
 
         $this->createStorageLink();
@@ -77,6 +79,13 @@ final class Install extends EdukaCommand
         $this->paragraph('-= ALL GOOD! Go and create that awesome course! =-');
 
         return 0;
+    }
+
+    protected function deleteModelsDefaultFolder()
+    {
+        $this->paragraph('=> Deleting App/Models directory (if exist)...', false);
+
+        $this->rrmdir(app_path('Models'));
     }
 
     protected function deleteStorageDirectories()
