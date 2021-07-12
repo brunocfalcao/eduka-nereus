@@ -129,16 +129,10 @@ final class Install extends EdukaCommand
 
         /*
          * Eduka packages
-         * brunocfalcao/eduka-cube
          * brunocfalcao/eduka-nereus
-         * brunocfalcao/eduka-maquillage
+         * brunocfalcao/eduka-analytics
          * brunocfalcao/eduka-nova
          **/
-        $this->call('vendor:publish', [
-            '--force' => true,
-            '--provider' => 'Eduka\\Cube\\EdukaCubeServiceProvider',
-        ]);
-
         $this->call('vendor:publish', [
             '--force' => true,
             '--provider' => 'Eduka\\Nereus\\EdukaNereusServiceProvider',
