@@ -72,7 +72,9 @@ final class Install extends EdukaCommand
 
         $this->createAdminUser();
 
-        $this->paragraph('-= ALL GOOD! Go and create that awesome course! =-', false, false);
+        $this->paragraph('-= ATTENTION! Do not forget to publish your course package resources! =-', false, false);
+
+        $this->paragraph('-= ALL GOOD! Go and create that awesome course! =-');
 
         return 0;
     }
