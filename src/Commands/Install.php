@@ -83,7 +83,7 @@ final class Install extends EdukaCommand
         if (is_dir(app_path('Models'))) {
             @$this->rrmdir(app_path('Models'));
         }
-        
+
         @unlink(app_path('Nova/User.php'));
     }
 
