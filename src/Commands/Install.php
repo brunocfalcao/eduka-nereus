@@ -13,8 +13,8 @@ final class Install extends EdukaCommand
      *
      * @var string
      */
-    protected $signature = 'eduka:install {--with-test-data : Install with testing data}
-                                          {--fast : No questions asked}';
+    protected $signature = 'eduka:install {--fast : No questions asked}
+                                          {--active : Activate the course already}';
 
     /**
      * The console command description.
@@ -45,8 +45,8 @@ final class Install extends EdukaCommand
 
         $this->paragraph('-= Eduka installation =-', false);
 
-        if (!$this->option('quiet')) {
-            if (!$this->confirm('Did you install LARAVEL NOVA and LARAVEL HORIZON first?')) {
+        if (! $this->option('fast')) {
+            if (! $this->confirm('Did you install LARAVEL NOVA and LARAVEL HORIZON first?')) {
                 return;
             }
         }
@@ -76,11 +76,24 @@ final class Install extends EdukaCommand
 
         $this->createAdminUser();
 
+        $this->createCourse();
+
         $this->paragraph('-= ATTENTION! Do not forget to publish your course package resources! =-', false, false);
 
         $this->paragraph('-= ALL GOOD! Go and create that awesome course! =-');
 
         return 0;
+    }
+
+    protected function createCourse()
+    {
+        $this->paragraph('=> Creating Course...', true, false);
+
+        Course::born();
+
+        if ($this->option('active')) {
+            Course::activate();
+        }
     }
 
     protected function deleteModelsDefaultFolder()
@@ -129,15 +142,9 @@ final class Install extends EdukaCommand
 
     protected function migrateFresh()
     {
-        $this->paragraph('=> Creating Eduka database schema + seeding initial data + optional test data...', false);
+        $this->paragraph('=> Creating Eduka database schema...', false);
 
-        if ($this->option('with-test-data')) {
-            $this->call('eduka:fresh-seed', [
-                '--with-test-data' => true,
-            ]);
-        } else {
-            $this->call('eduka:fresh-seed');
-        }
+        $this->call('migrate:fresh');
     }
 
     protected function publishEdukaResources()

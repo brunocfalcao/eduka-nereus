@@ -5,7 +5,6 @@ namespace Eduka\Nereus\Controllers\PreLaunch;
 use App\Http\Controllers\Controller;
 use Eduka\Cube\Models\Subscriber;
 use Eduka\Cube\Models\User;
-use Eduka\NovaAdvancedUI\Mail\ThankYouForSubscribing;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
