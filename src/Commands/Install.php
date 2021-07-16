@@ -13,7 +13,8 @@ final class Install extends EdukaCommand
      *
      * @var string
      */
-    protected $signature = 'eduka:install {--with-test-data : Install with testing data}';
+    protected $signature = 'eduka:install {--with-test-data : Install with testing data
+                                           --quiet : No questions asked}';
 
     /**
      * The console command description.
@@ -43,6 +44,12 @@ final class Install extends EdukaCommand
         ');
 
         $this->paragraph('-= Eduka installation =-', false);
+
+        if (!$this->option('silent')) {
+            if ($this->confirm('Did you install LARAVEL NOVA and LARAVEL HORIZON first?')) {
+                //
+            }
+        }
 
         // Clear framework cache.
         $this->call('optimize:clear');
@@ -247,7 +254,7 @@ final class Install extends EdukaCommand
         });
 
         if (! $result) {
-            return $this->error("You are missing information your .env file. Please verify the following keys: 
+            return $this->error("You are missing information your .env file. Please verify the following keys:
                 env('APP_NAME')
                 env('EDUKA_ADMIN_NAME')
                 env('EDUKA_ADMIN_ADDRESS')
