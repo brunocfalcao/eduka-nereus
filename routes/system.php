@@ -9,4 +9,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::post('/inbound', [PostmarkController::class, 'inbound']);
+//Route::post('inbound', [PostmarkController::class, 'inbound']);

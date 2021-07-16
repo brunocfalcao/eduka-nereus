@@ -66,8 +66,6 @@ final class Install extends EdukaCommand
 
         $this->createStorageLink();
 
-        $this->publish3rdPartyResources();
-
         $this->publishEdukaResources();
 
         $this->replaceJsonDataTypesToLongText();
@@ -92,6 +90,8 @@ final class Install extends EdukaCommand
         Course::born();
 
         if ($this->option('active')) {
+            $this->paragraph('=> Activating Course...', true, false);
+
             Course::activate();
         }
     }
@@ -170,31 +170,6 @@ final class Install extends EdukaCommand
         $this->call('vendor:publish', [
             '--force' => true,
             '--provider' => 'Eduka\\Nova\\EdukaNovaServiceProvider',
-        ]);
-    }
-
-    protected function publish3rdPartyResources()
-    {
-        $this->paragraph('=> Publishing 3rd party package resources...');
-
-        /*
-         * 3rd party packages:
-         * ebess/advanced-nova-media-library
-         * spatie/laravel-medialibrary
-         **/
-        $this->call('vendor:publish', [
-            '--force' => true,
-            '--provider' => 'Ebess\\AdvancedNovaMediaLibrary\\AdvancedNovaMediaLibraryServiceProvider',
-        ]);
-
-        // Delete previous create_media_file migrations.
-        foreach (glob(database_path('migrations/*create_media_table.php')) as $filename) {
-            unlink($filename);
-        }
-
-        $this->call('vendor:publish', [
-            '--force' => true,
-            '--provider' => 'Spatie\\MediaLibrary\\MediaLibraryServiceProvider',
         ]);
     }
 
