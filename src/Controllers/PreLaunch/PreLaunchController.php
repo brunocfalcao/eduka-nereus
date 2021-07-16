@@ -36,17 +36,20 @@ class PreLaunchController extends Controller
             'email' => 'required|email:rfc,dns|unique:Eduka\Cube\Models\Subscriber,email',
         ]);
 
-        // Create subscriber.
-        $subscriber = Subscriber::create([
-            'name' => null,
-            'email' => strtolower($request->input('email')),
-        ]);
+        Subscriber::where('email', $request->input('email'))->firstOr(function () use ($request) {
 
-        // Send subscribed email.
-        //$mailable = config('eduka-nereus.mail.subscribed');
+            // Create subscriber.
+            $subscriber = Subscriber::create([
+                'name' => null,
+                'email' => strtolower($request->input('email')),
+            ]);
 
-        Mail::to($request->input('email'))
-            ->send(new ThankYouForSubscribing());
+            // Send subscribed email.
+            $mailable = config('eduka-nereus.mail.subscribed');
+
+            Mail::to($request->input('email'))
+                ->send(new $mailable($subscriber));
+        });
 
         return view('site::prelaunched.default');
     }
