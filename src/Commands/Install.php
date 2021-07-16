@@ -46,8 +46,8 @@ final class Install extends EdukaCommand
         $this->paragraph('-= Eduka installation =-', false);
 
         if (!$this->option('silent')) {
-            if ($this->confirm('Did you install LARAVEL NOVA and LARAVEL HORIZON first?')) {
-                //
+            if (!$this->confirm('Did you install LARAVEL NOVA and LARAVEL HORIZON first?')) {
+                return;
             }
         }
 

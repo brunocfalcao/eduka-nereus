@@ -6,7 +6,7 @@ use Eduka\Nereus\Controllers\PreLaunch\SubscriptionController;
 
 /*
 |--------------------------------------------------------------------------
-| Eduka course routes
+| Eduka course routes - Routes list. DO NOT CHANGE THIS FILE.
 |--------------------------------------------------------------------------
 |
 */
