@@ -13,8 +13,8 @@ final class Install extends EdukaCommand
      *
      * @var string
      */
-    protected $signature = 'eduka:install {--with-test-data : Install with testing data
-                                           --quiet : No questions asked}';
+    protected $signature = 'eduka:install {--with-test-data : Install with testing data}
+                                          {--fast : No questions asked}';
 
     /**
      * The console command description.
@@ -45,7 +45,7 @@ final class Install extends EdukaCommand
 
         $this->paragraph('-= Eduka installation =-', false);
 
-        if (!$this->option('silent')) {
+        if (!$this->option('quiet')) {
             if (!$this->confirm('Did you install LARAVEL NOVA and LARAVEL HORIZON first?')) {
                 return;
             }
