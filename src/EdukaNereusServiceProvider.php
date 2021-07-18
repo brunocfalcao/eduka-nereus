@@ -50,6 +50,7 @@ class EdukaNereusServiceProvider extends EdukaServiceProvider
     {
         $this->publishes([
             __DIR__.'/../resources/overrides/' => base_path('/'),
+            __DIR__.'/../resources/overrides/public/vendor/eduka-nereus/images/eduka-logo-social.jpg' => storage_path('app/public/eduka-nova/meta/eduka-logo-social.jpg')
         ]);
     }
 
