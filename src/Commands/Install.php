@@ -142,7 +142,7 @@ final class Install extends EdukaCommand
 
     protected function migrateFresh()
     {
-        $this->paragraph('=> Creating Eduka database schema...', false);
+        $this->paragraph('=> Creating Eduka database schema...');
 
         $this->call('migrate:fresh');
     }
