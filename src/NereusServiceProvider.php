@@ -48,9 +48,6 @@ class NereusServiceProvider extends EdukaServiceProvider
 
     public function register()
     {
-        /**
-         * Bind facades.
-         */
         $this->app->bind('eduka-nereus', function () {
             return new Nereus();
         });
