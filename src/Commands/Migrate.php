@@ -29,8 +29,6 @@ class Migrate extends EdukaCommand
 
         $this->paragraph('-= Run course migrations (artisan migrate) =-', false);
 
-        dd('ok');
-
         if ($this->argument('canonical')) {
             // Will have a collection of course instances to run.
             $courses = collect();
