@@ -28,19 +28,21 @@ class NereusServiceProvider extends EdukaServiceProvider
          * - In backend, the visitor is on the her backend (to see videos).
          */
         if (! $this->app->runningInConsole()) {
-            $this->course = NereusFacade::matchCourse();
+            $this->course = NereusFacade::matchCourse() ??
+                            NereusFacade::matchCourseByLoadedProviders();
 
             if ($this->course) {
                 /**
                  * Load the routes, analytics middleware, course service
                  * provider, etc.
                  */
+
                 $this->loadFrontendRoutes();
                 $this->registerCourseServiceProvider();
             }
 
             // Throw the HTTP 501 error. Limbo error.
-            //abort(501, 'Look! You are in the limbo!');
+            // abort(501, "No domain found to load a specific course or the admin backoffice");
         }
 
         parent::boot();
@@ -88,6 +90,11 @@ class NereusServiceProvider extends EdukaServiceProvider
 
     protected function registerCourseServiceProvider()
     {
+        /**
+         * We will then register the course provider. No need to verify
+         * if this course service provider is already registered via the
+         * load_providers config key, since laravel already does that.
+         */
         $this->course->registerSelfProvider();
     }
 

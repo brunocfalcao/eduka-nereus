@@ -3,6 +3,7 @@
 namespace Eduka\Nereus;
 
 use Brunocfalcao\Cerebrus\ConcernsSessionPersistence;
+use Eduka\Cube\Models\Course;
 use Eduka\Cube\Models\Domain;
 
 class Nereus
@@ -68,6 +69,27 @@ class Nereus
                               ->first();
     }
 
+    /**
+     * [matchCourseByLoadedProviders description]
+     * @return [type] [description]
+     */
+    public function matchCourseByLoadedProviders()
+    {
+        foreach (config('eduka.system.load_providers') as $loadedProvider) {
+            // Remove first backslash and the ::class at the end.
+
+            if (app()->getProviders($loadedProvider)) {
+                // Let's check if we have that provider as a course.
+                return Course::firstWhere('provider_namespace', $loadedProvider);
+            }
+        }
+    }
+
+    /**
+     * Tries to match an eduka course by the domain used by the visitor.
+     *
+     * @return \Eduka\Cube\Models\Course
+     */
     public function matchCourse()
     {
         $domain = $this->matchDomain();
