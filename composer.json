@@ -24,7 +24,6 @@
         "brunocfalcao/eduka-abstracts": "dev-master",
         "brunocfalcao/eduka-services": "dev-master",
         "brunocfalcao/eduka-migrations": "dev-master",
-        "brunocfalcao/helpers": "dev-master",
         "brunocfalcao/eduka-ui": "dev-master"
     },
     "autoload": {
