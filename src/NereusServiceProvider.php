@@ -36,7 +36,6 @@ class NereusServiceProvider extends EdukaServiceProvider
                  * Load the routes, analytics middleware, course service
                  * provider, etc.
                  */
-
                 $this->loadFrontendRoutes();
                 $this->registerCourseServiceProvider();
             }
