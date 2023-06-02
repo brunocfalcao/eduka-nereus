@@ -38,6 +38,9 @@ class NereusServiceProvider extends EdukaServiceProvider
                  */
                 $this->loadFrontendRoutes();
                 $this->registerCourseServiceProvider();
+
+                // eduka-course prefix
+                // new Cerebrus Session
             }
 
             // Throw the HTTP 501 error. Limbo error.

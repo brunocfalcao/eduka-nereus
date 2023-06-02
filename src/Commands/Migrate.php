@@ -8,7 +8,10 @@ use Illuminate\Support\Facades\Artisan;
 
 class Migrate extends EdukaCommand
 {
-    protected $signature = 'eduka:migrate { canonical? : The course canonical, if not runs for all courses migrations }';
+    protected $signature = 'eduka:migrate 
+                            { canonical? : The course canonical, if not runs for all courses migrations }
+                            {--seeder=}
+                            ';
 
     protected $description = 'Runs a course (or all courses) migrations';
 
@@ -41,7 +44,18 @@ class Migrate extends EdukaCommand
             $this->paragraph('Registering "'.$course->name.'" service provider...', false);
             $course->registerSelfProvider();
             $this->paragraph('Running "php artisan migrate ...');
-            Artisan::call('migrate');
+
+            $options = [];
+
+            if($this->option('seeder')) {
+                $options = [
+                    '--seed' => true,
+                    '--seeder' => $this->option('seeder'),
+                ];
+            }
+
+            Artisan::call('migrate', $options);
+
             $this->info(Artisan::output());
         });
 
