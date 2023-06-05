@@ -3,6 +3,8 @@
 namespace Eduka\Nereus\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Eduka\Cube\Events\Domains\SubscriberCreated;
+use Eduka\Cube\Models\Course;
 use Eduka\Cube\Models\Subscriber;
 use Illuminate\Http\Request;
 
@@ -29,18 +31,18 @@ class NewsletterController extends Controller
 
         // check if user already exists or not
         $subscriberCount = Subscriber::where('email', $request->get('email'))
-            ->where('course_id', $request->course_id)
+            ->where('course_id', 1) // @todo change course id
             ->count();
 
-        // @todo refactor response code
+        // @todo change json responses to return redirect back with error
+        // add directives
+
         if ($subscriberCount > 0) {
-            return response()->json([
-                'status' => 'error',
-                // @todo
-                // 1. update message
-                // 2. use locale __()
-                'message' => 'you have already subscribed to this newsletter.'
-            ]);
+            return redirect()
+                ->back()
+                ->withErrors([
+                    'subscriber.message' => 'you have already subscribed to this newsletter',
+                ]);
         }
 
         // should create event that triggers
@@ -51,15 +53,15 @@ class NewsletterController extends Controller
             'email' => $request->email,
         ]);
 
-        // can call event here
-        // use normal markdown email
+        // @todo fetch the current course
+        $course = Course::make();
+        event(new SubscriberCreated($subscriber, $course));
 
-        return response()->json([
-            'status' => 'success',
-            // @todo
-            // 1. update message
-            // 2. use locale __()
-            'message' => 'you have successfully subscribed to the newsletter.'
-        ]);
+        return redirect()
+            ->back()
+            ->with([
+                // 2. use locale __()
+                'message' => 'you have successfully subscribed to the newsletter.'
+            ]);
     }
 }
