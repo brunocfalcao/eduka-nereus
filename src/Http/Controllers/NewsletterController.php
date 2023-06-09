@@ -3,13 +3,19 @@
 namespace Eduka\Nereus\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Eduka\Cube\Events\Domains\SubscriberCreated;
-use Eduka\Cube\Models\Course;
+use Brunocfalcao\Cerebrus\Cerebrus;
+use Eduka\Cube\Events\Subscribers\SubscriberCreated;
 use Eduka\Cube\Models\Subscriber;
 use Illuminate\Http\Request;
 
 class NewsletterController extends Controller
 {
+    private Cerebrus $session;
+
+    public function __construct(Cerebrus $session)
+    {
+        $this->session = $session;
+    }
     /**
      * To subscribe a user to the newsletter, we at first check
      * if the given email is already registered to this course's
@@ -24,18 +30,17 @@ class NewsletterController extends Controller
      */
     public function subscribeToNewsletter(Request $request)
     {
+        // @todo refactor
+        $course = $this->session->get('mastering-nova.course');
+
         $this->validate($request, [
-            'course_id' => 'reuqired|exists:courses,id',
             'email' => 'required|email',
         ]);
 
         // check if user already exists or not
         $subscriberCount = Subscriber::where('email', $request->get('email'))
-            ->where('course_id', 1) // @todo change course id
+            ->where('course_id', $course->id)
             ->count();
-
-        // @todo change json responses to return redirect back with error
-        // add directives
 
         if ($subscriberCount > 0) {
             return redirect()
@@ -45,16 +50,11 @@ class NewsletterController extends Controller
                 ]);
         }
 
-        // should create event that triggers
-        // subscriber -> create -> createdEvent -> listener -> mialable
-        // @todo note: use session for $request->get('course_id')
         $subscriber = Subscriber::create([
-            'course_id' => $request->get('course_id'),
-            'email' => $request->email,
+            'course_id' => $request->get('course_id',$course->id),
+            'email' => $request->get('email'),
         ]);
 
-        // @todo fetch the current course
-        $course = Course::make();
         event(new SubscriberCreated($subscriber, $course));
 
         return redirect()

@@ -2,14 +2,18 @@
 
 namespace Eduka\Nereus;
 
+use Brunocfalcao\Cerebrus\Cerebrus;
 use Eduka\Abstracts\Classes\EdukaServiceProvider;
 use Eduka\Analytics\Middleware\TrackVisit;
 use Eduka\Nereus\Commands\Migrate;
 use Eduka\Nereus\Facades\Nereus as NereusFacade;
 use Illuminate\Support\Facades\Route;
+use MasteringNova\MasteringNovaServiceProvider;
 
 class NereusServiceProvider extends EdukaServiceProvider
 {
+    public const COURSE_SESSION_KEY = 'course';
+
     public $course;
 
     public function boot()
@@ -39,8 +43,12 @@ class NereusServiceProvider extends EdukaServiceProvider
                 $this->loadFrontendRoutes();
                 $this->registerCourseServiceProvider();
 
-                // eduka-course prefix
                 // new Cerebrus Session
+                // eduka-course prefix
+                (new Cerebrus())->set(
+                    MasteringNovaServiceProvider::SESSION_PREFIX . '.' . self::COURSE_SESSION_KEY,
+                    $this->course,
+                );
             }
 
             // Throw the HTTP 501 error. Limbo error.
