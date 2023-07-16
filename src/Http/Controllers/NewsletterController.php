@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use Brunocfalcao\Cerebrus\Cerebrus;
 use Eduka\Cube\Events\Subscribers\SubscriberCreated;
 use Eduka\Cube\Models\Subscriber;
+use Eduka\Nereus\NereusServiceProvider;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class NewsletterController extends Controller
 {
@@ -30,12 +32,12 @@ class NewsletterController extends Controller
      */
     public function subscribeToNewsletter(Request $request)
     {
-        // @todo refactor
-        $course = $this->session->get('mastering-nova.course');
+        // @todo take it behind some method, so we don't missmatch the string key.
+        $course = $this->session->get(NereusServiceProvider::COURSE_SESSION_KEY);
 
-        $this->validate($request, [
+        Validator::make($request->all(), [
             'email' => 'required|email',
-        ]);
+        ])->validateWithBag('subscribeToNewsletter');
 
         // check if user already exists or not
         $subscriberCount = Subscriber::where('email', $request->get('email'))
@@ -47,7 +49,7 @@ class NewsletterController extends Controller
                 ->back()
                 ->withErrors([
                     'subscriber.message' => 'you have already subscribed to this newsletter',
-                ]);
+                ],'subscribeToNewsletter');
         }
 
         $subscriber = Subscriber::create([
@@ -57,11 +59,12 @@ class NewsletterController extends Controller
 
         event(new SubscriberCreated($subscriber, $course));
 
+        $this->session->set('subscribed_' . $course->id  . '_newsletter', true);
+
         return redirect()
             ->back()
             ->with([
-                // 2. use locale __()
-                'message' => 'you have successfully subscribed to the newsletter.'
+                'notification.newsletter.message' => 'you have successfully subscribed to the newsletter.'
             ]);
     }
 }

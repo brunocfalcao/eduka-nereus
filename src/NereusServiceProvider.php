@@ -46,7 +46,7 @@ class NereusServiceProvider extends EdukaServiceProvider
                 // new Cerebrus Session
                 // eduka-course prefix
                 (new Cerebrus())->set(
-                    MasteringNovaServiceProvider::SESSION_PREFIX . '.' . self::COURSE_SESSION_KEY,
+                    self::COURSE_SESSION_KEY,
                     $this->course,
                 );
             }
@@ -54,7 +54,6 @@ class NereusServiceProvider extends EdukaServiceProvider
             // Throw the HTTP 501 error. Limbo error.
             // abort(501, "No domain found to load a specific course or the admin backoffice");
         }
-
         parent::boot();
     }
 
@@ -63,6 +62,7 @@ class NereusServiceProvider extends EdukaServiceProvider
         $this->app->bind('eduka-nereus', function () {
             return new Nereus();
         });
+
 
         $this->registerAdditionalProviders();
     }
