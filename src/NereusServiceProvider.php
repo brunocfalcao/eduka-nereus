@@ -9,10 +9,14 @@ use Eduka\Nereus\Commands\Migrate;
 use Eduka\Nereus\Facades\Nereus as NereusFacade;
 use Illuminate\Support\Facades\Route;
 use MasteringNova\MasteringNovaServiceProvider;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 
 class NereusServiceProvider extends EdukaServiceProvider
 {
     public const COURSE_SESSION_KEY = 'course';
+    public const NONCE_KEY = 'nonce';
 
     public $course;
 
@@ -55,6 +59,10 @@ class NereusServiceProvider extends EdukaServiceProvider
             // abort(501, "No domain found to load a specific course or the admin backoffice");
         }
         parent::boot();
+
+        RateLimiter::for('payment', function () {
+            return Limit::perMinute(5); // @todo take from config
+        });
     }
 
     public function register()
