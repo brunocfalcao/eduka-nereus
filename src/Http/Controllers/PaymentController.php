@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Notifications\UserEmailNotification;
 use Brunocfalcao\Cerebrus\Cerebrus;
 use Eduka\Cube\Models\Coupon;
+use Eduka\Cube\Models\Course;
 use Eduka\Cube\Models\Order;
 use Eduka\Cube\Models\User;
 use Eduka\Nereus\NereusServiceProvider;
@@ -21,7 +22,6 @@ use Illuminate\Support\Str;
 class PaymentController extends Controller
 {
     private Cerebrus $session;
-    // private PaymentsInterface $payment;
     private string $lemonSqueezyApiKey;
 
     public function __construct(Cerebrus $session)
@@ -30,7 +30,7 @@ class PaymentController extends Controller
         $this->session = $session;
     }
 
-    public function redirectToCheckoutPage(HttpRequest $request)
+    public function redirectToCheckoutPage()
     {
         $course = $this->session->get(NereusServiceProvider::COURSE_SESSION_KEY);
 
@@ -38,35 +38,44 @@ class PaymentController extends Controller
             return redirect()->back();
         }
 
-        // @todo remove hardcoded ip // 101.188.67.134
-        // $request->ip()
         $userCountryIsoCode = self::getUserCountryIsoCode('101.188.67.134')->getIsoCode();
 
         if ($userCountryIsoCode) {
-            $this->ensureCouponOnLemonSqueezy($userCountryIsoCode);
+            $this->ensureCouponOnLemonSqueezy($userCountryIsoCode, $course->paymentProviderStoreId());
         }
 
         $paymentsApi = new LemonSqueezy($this->lemonSqueezyApiKey);
 
         $nonceKey = Str::random();
 
-        // should i create the user first?
-        $r = $paymentsApi
-            ->setRedirectUrl(route('purchase.callback', $nonceKey))
-            ->setExpiresAt(now()->addHours(2)->toString())
-            ->setCustomData(['course_id' => (string) $course->id])
-            ->setCustomPrice($course->priceInCents())
-            ->setVariantId("102989") // @todo change from db
-            ->createCheckout();
+        $response = $this->createCheckout($paymentsApi, $course, $nonceKey);
 
-        $checkoutUrl = (new CreatedCheckoutResponse($r))->checkoutUrl();
+        $checkoutUrl = (new CreatedCheckoutResponse($response))->checkoutUrl();
 
         $this->session->set(NereusServiceProvider::NONCE_KEY, $nonceKey);
 
         return redirect()->away($checkoutUrl);
     }
 
-    private function ensureCouponOnLemonSqueezy(string $userCountryIsoCode)
+    private function createCheckout(LemonSqueezy $paymentsApi, Course $course, string $nonceKey)
+    {
+        try {
+            return $paymentsApi
+                ->setRedirectUrl(route('purchase.callback', $nonceKey))
+                ->setExpiresAt(now()->addHours(2)->toString())
+                ->setCustomData(['course_id' => (string) $course->id])
+                ->setCustomPrice($course->priceInCents())
+                ->setStoreId($course->paymentProviderStoreId())
+                ->setVariantId($course->paymentProviderProductId())
+                ->createCheckout();
+
+        } catch (\Exception $e) {
+            $this->log("could not create checkout.", $e);
+            throw $e;
+        }
+    }
+
+    private function ensureCouponOnLemonSqueezy(string $userCountryIsoCode, string $storeId)
     {
         $coupon = Coupon::where('country_iso_code', strtolower($userCountryIsoCode))->exists();
 
@@ -83,7 +92,9 @@ class PaymentController extends Controller
         $remoteRef = null;
 
         try {
-            $response = $lsApi->createDiscount($code, $code, $amount, $isFlat);
+            $response = $lsApi
+                ->setStoreId($storeId)
+                ->createDiscount($code, $code, $amount, $isFlat);
 
             $res = json_decode($response, true);
 

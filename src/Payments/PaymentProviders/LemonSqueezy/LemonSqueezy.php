@@ -2,11 +2,10 @@
 
 namespace Eduka\Nereus\Payments\PaymentProviders\LemonSqueezy;
 
-use Eduka\Nereus\Payments\PaymentProviders\PaymentsInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
-class LemonSqueezy implements PaymentsInterface
+class LemonSqueezy
 {
     private string $baseUri = "https://api.lemonsqueezy.com/v1";
 
@@ -25,7 +24,6 @@ class LemonSqueezy implements PaymentsInterface
 
     public function createCheckout()
     {
-        $this->setStoreId();
         $this->data['type'] = 'checkouts';
 
         return $this->post("checkouts");
@@ -38,7 +36,6 @@ class LemonSqueezy implements PaymentsInterface
 
     public function createDiscount(string $name, string $code, float $amount, bool $isFixed)
     {
-        $this->setStoreId();
         $this->data['type'] = 'discounts';
 
         $this->data['attributes'] = [
@@ -72,11 +69,6 @@ class LemonSqueezy implements PaymentsInterface
         } catch (\Exception $e) {
             throw $e;
         }
-    }
-
-
-    public function calculateGrandTotal()
-    {
     }
 
     public function setCustomPrice($price)
@@ -121,13 +113,12 @@ class LemonSqueezy implements PaymentsInterface
         return $this;
     }
 
-    public function setStoreId()
+    public function setStoreId(string $storeId)
     {
-        // @todo
         $this->data['relationships']['store'] = [
             'data' => [
                 'type' => 'stores',
-                'id' => '32633',
+                'id' => $storeId,
             ]
         ];
 
