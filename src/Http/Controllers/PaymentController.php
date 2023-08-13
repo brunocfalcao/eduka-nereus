@@ -3,8 +3,10 @@
 namespace Eduka\Nereus\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Notifications\UserEmailNotification;
 use Brunocfalcao\Cerebrus\Cerebrus;
 use Eduka\Cube\Models\Coupon;
+use Eduka\Cube\Models\Order;
 use Eduka\Cube\Models\User;
 use Eduka\Nereus\NereusServiceProvider;
 use Eduka\Nereus\Payments\PaymentProviders\LemonSqueezy\LemonSqueezy;
@@ -12,6 +14,7 @@ use Eduka\Nereus\Payments\PaymentProviders\LemonSqueezy\Responses\CreatedCheckou
 use Exception;
 use Illuminate\Http\Request as HttpRequest;
 use Hibit\GeoDetect;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -35,9 +38,9 @@ class PaymentController extends Controller
             return redirect()->back();
         }
 
-        // @todo remove hardcoded ip
+        // @todo remove hardcoded ip // 101.188.67.134
         // $request->ip()
-        $userCountryIsoCode = $this->getUserCountryIsoCode('101.188.67.134');
+        $userCountryIsoCode = self::getUserCountryIsoCode('101.188.67.134')->getIsoCode();
 
         if ($userCountryIsoCode) {
             $this->ensureCouponOnLemonSqueezy($userCountryIsoCode);
@@ -51,6 +54,8 @@ class PaymentController extends Controller
         $r = $paymentsApi
             ->setRedirectUrl(route('purchase.callback', $nonceKey))
             ->setExpiresAt(now()->addHours(2)->toString())
+            ->setCustomData(['course_id' => (string) $course->id])
+            ->setCustomPrice($course->priceInCents())
             ->setVariantId("102989") // @todo change from db
             ->createCheckout();
 
@@ -119,13 +124,11 @@ class PaymentController extends Controller
         ]);
     }
 
-    private function getUserCountryIsoCode(string $ip)
+    public static function getUserCountryIsoCode(string $ip)
     {
         try {
             $geoDetect = new GeoDetect();
-            $country = $geoDetect->getCountry($ip);
-
-            return $country->getIsoCode();
+            return $geoDetect->getCountry($ip);
         } catch (\Exception $e) {
             // pass
             Log::error('could not determine user country', [
@@ -138,16 +141,44 @@ class PaymentController extends Controller
 
     public function handleWebhook(HttpRequest $request)
     {
-        $this->validate($request, [
-            'attributes.user_email' => 'required',
+        $json = $request->all();
+
+        // check if user exists or not
+        $userEmail = $json['data']['attributes']['user_email'];
+
+        $user = $this->findOrCreateUser($userEmail, $json['data']['attributes']['user_name']);
+        // if yes, use user id
+        // if not, create and then use user id
+        $course = $this->session->get(NereusServiceProvider::COURSE_SESSION_KEY);
+
+        // create order
+        // send email
+        // save everything in the response
+        $order = Order::create([
+            'user_id' => $user->id,
+            'course_id' => $course->id,
+            'response_body' => json_encode($json),
         ]);
 
-        $email = $request->get('attributes.user_email');
-        $user = User::whereEmail($email)->first();
+        $user->notify(new UserEmailNotification($course->name));
+
+        return response()->json(['status' => 'ok']);
+    }
+
+    private function findOrCreateUser(string $email, string $name)
+    {
+        $user = User::where('email', $email)->first();
 
         if (!$user) {
-            logger(sprintf('user with email: %s not found.', $email));
-            return;
+            $user = User::forceCreate([
+                'name' => $name,
+                'email' => $email,
+                'password' => Hash::make(Str::random()),
+                'uuid' => Str::uuid(),
+                'created_at' => now(),
+            ]);
         }
+
+        return $user;
     }
 }

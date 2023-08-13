@@ -23,11 +23,6 @@ class LemonSqueezy implements PaymentsInterface
         $this->data['relationships'] = [];
     }
 
-    public function getProductById(int|string $id)
-    {
-        dd($id);
-    }
-
     public function createCheckout()
     {
         $this->setStoreId();
