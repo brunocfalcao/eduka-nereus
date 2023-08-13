@@ -12,9 +12,11 @@ use Eduka\Cube\Models\User;
 use Eduka\Nereus\NereusServiceProvider;
 use Eduka\Nereus\Payments\PaymentProviders\LemonSqueezy\LemonSqueezy;
 use Eduka\Nereus\Payments\PaymentProviders\LemonSqueezy\Responses\CreatedCheckoutResponse;
+use Eduka\Payments\Notifications\WelcomeNewCourseUserNotification;
 use Exception;
 use Illuminate\Http\Request as HttpRequest;
 use Hibit\GeoDetect;
+use Hibit\Country\CountryRecord;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -23,34 +25,34 @@ class PaymentController extends Controller
 {
     private Cerebrus $session;
     private string $lemonSqueezyApiKey;
+    private Course $course;
 
     public function __construct(Cerebrus $session)
     {
         $this->lemonSqueezyApiKey = env('LEMON_SQUEEZY_API_KEY');
         $this->session = $session;
+        $this->course = $this->session->get(NereusServiceProvider::COURSE_SESSION_KEY);
     }
 
-    public function redirectToCheckoutPage()
+    public function redirectToCheckoutPage(HttpRequest $request)
     {
-        $course = $this->session->get(NereusServiceProvider::COURSE_SESSION_KEY);
-
-        if (!$course) {
+        if (!$this->course) {
             return redirect()->back();
         }
 
-        $userCountryIsoCode = self::getUserCountryIsoCode('101.188.67.134')->getIsoCode();
+        $userCountry = self::getUserCountry($request->ip2());
 
-        if ($userCountryIsoCode) {
-            $this->ensureCouponOnLemonSqueezy($userCountryIsoCode, $course->paymentProviderStoreId());
+        if ($userCountry) {
+            $this->ensureCouponOnLemonSqueezy($userCountry);
         }
 
         $paymentsApi = new LemonSqueezy($this->lemonSqueezyApiKey);
 
         $nonceKey = Str::random();
 
-        $response = $this->createCheckout($paymentsApi, $course, $nonceKey);
+        $checkoutResponse = $this->createCheckout($paymentsApi, $this->course, $nonceKey);
 
-        $checkoutUrl = (new CreatedCheckoutResponse($response))->checkoutUrl();
+        $checkoutUrl = (new CreatedCheckoutResponse($checkoutResponse))->checkoutUrl();
 
         $this->session->set(NereusServiceProvider::NONCE_KEY, $nonceKey);
 
@@ -63,79 +65,88 @@ class PaymentController extends Controller
             return $paymentsApi
                 ->setRedirectUrl(route('purchase.callback', $nonceKey))
                 ->setExpiresAt(now()->addHours(2)->toString())
-                ->setCustomData(['course_id' => (string) $course->id])
+                ->setCustomData(['course_id' => (string) $course->id]) // course metadata
                 ->setCustomPrice($course->priceInCents())
                 ->setStoreId($course->paymentProviderStoreId())
                 ->setVariantId($course->paymentProviderProductId())
                 ->createCheckout();
-
         } catch (\Exception $e) {
             $this->log("could not create checkout.", $e);
             throw $e;
         }
     }
 
-    private function ensureCouponOnLemonSqueezy(string $userCountryIsoCode, string $storeId)
+    private function ensureCouponOnLemonSqueezy(CountryRecord $country)
     {
-        $coupon = Coupon::where('country_iso_code', strtolower($userCountryIsoCode))->exists();
+        $coupon = Coupon::where('country_iso_code', strtoupper($country->getIsoCode()))->first();
+        // coupon does not exists in database
+        if (!$coupon) {
+            return false;
+        }
 
-        if ($coupon) {
+        // check if coupon has remote reference id, if yes, it means coupon also exists in lemon squeezy
+        if ($coupon->hasRemoteReference()) {
             return true;
         }
 
-        // create on lemon squzze
-        $lsApi = new LemonSqueezy($this->lemonSqueezyApiKey);
-        $amount = 30;
-        $code = "ILOVE" . strtoupper($userCountryIsoCode) . $amount;
-        $isFlat = false;
-        // @todo note: remove hardcoded value
-        $remoteRef = null;
+        // reaching here means coupon exists in database, but not on lemon squeezy.
+        // create coupon on lemon squeezy and update remote reference id
+        $code = $coupon->generateCodeForCountry(strtoupper($country->getName()), strtoupper($country->getIsoCode()));
+
+        $reference = $this->createCouponInLemonSqueezy($code, $coupon->discount_amount, $coupon->is_flat_discount);
+
+        if (!$reference) {
+            // could not create coupon in lemon squezzy
+            return false;
+        }
+
+        // coupon created, update $coupon in local db
+        $coupon->update([
+            'code' => $code,
+            'remote_reference_id' => $reference,
+        ]);
+    }
+
+    private function createCouponInLemonSqueezy(string $code, float $amount, bool $isFixed)
+    {
+        $couponApi = new LemonSqueezy($this->lemonSqueezyApiKey);
 
         try {
-            $response = $lsApi
-                ->setStoreId($storeId)
-                ->createDiscount($code, $code, $amount, $isFlat);
+            $response = $couponApi
+                ->setStoreId($this->course->paymentProviderStoreId())
+                ->createDiscount($code, $amount, $isFixed);
 
             $res = json_decode($response, true);
 
-            if (isset($res['data'])) {
-                $remoteRef = $res['data']['id'];
+            if(isset($res['errors'])) {
+                $this->log($res['errors'][0]['detail'], null, $res['errors']);
+                return false;
             }
+
+            if (isset($res['data'])) {
+                return $res['data']['id'];
+            }
+
+            return false;
         } catch (Exception $e) {
             $this->log("could not create coupon in lemonsquzzy", $e);
 
             return false;
         }
-
-        return $this->storeCouponInDb(
-            $code,
-            $isFlat ? $amount * 100 : $amount,
-            $isFlat,
-            $userCountryIsoCode,
-            $remoteRef
-        );
     }
 
-    private function storeCouponInDb(string $code, float $amount, bool $isFlat, string $userCountryIsoCode, string $remoteRef = null)
+    private function log(string $message, ?Exception $e, array $data = [])
     {
-        return Coupon::forceCreate([
-            'code' => $code,
-            // 'name' => $code,
-            'is_flat_discount' => $isFlat,
-            'discount_amount' => $amount,
-            'country_iso_code' => $userCountryIsoCode,
-            'remote_reference_id' => $remoteRef,
-        ]);
+        if($e) {
+            $data[] = [
+                'message' => $e->getMessage(),
+            ];
+        }
+
+        Log::error($message, $data);
     }
 
-    private function log(string $message, Exception $e)
-    {
-        Log::error($message, [
-            'message' => $e->getMessage(),
-        ]);
-    }
-
-    public static function getUserCountryIsoCode(string $ip)
+    public static function getUserCountry(string $ip): CountryRecord|null
     {
         try {
             $geoDetect = new GeoDetect();
@@ -157,7 +168,7 @@ class PaymentController extends Controller
         // check if user exists or not
         $userEmail = $json['data']['attributes']['user_email'];
 
-        $user = $this->findOrCreateUser($userEmail, $json['data']['attributes']['user_name']);
+        list($user, $newUser) = $this->findOrCreateUser($userEmail, $json['data']['attributes']['user_name']);
         // if yes, use user id
         // if not, create and then use user id
         $course = $this->session->get(NereusServiceProvider::COURSE_SESSION_KEY);
@@ -171,7 +182,12 @@ class PaymentController extends Controller
             'response_body' => json_encode($json),
         ]);
 
-        $user->notify(new UserEmailNotification($course->name));
+        $user->notify(
+            $newUser ?
+            new UserEmailNotification($course->name) // @todo change here
+            :
+            new WelcomeNewCourseUserNotification($course->name)
+            );
 
         return response()->json(['status' => 'ok']);
     }
@@ -179,6 +195,7 @@ class PaymentController extends Controller
     private function findOrCreateUser(string $email, string $name)
     {
         $user = User::where('email', $email)->first();
+        $newUser = false;
 
         if (!$user) {
             $user = User::forceCreate([
@@ -188,8 +205,12 @@ class PaymentController extends Controller
                 'uuid' => Str::uuid(),
                 'created_at' => now(),
             ]);
+
+            $newUser = true;
         }
 
-        return $user;
+        return [
+            $user, $newUser,
+        ];
     }
 }

@@ -34,12 +34,12 @@ class LemonSqueezy
         return $this->makeRequest($path, self::METHOD_POST);
     }
 
-    public function createDiscount(string $name, string $code, float $amount, bool $isFixed)
+    public function createDiscount(string $code, float $amount, bool $isFixed)
     {
         $this->data['type'] = 'discounts';
 
         $this->data['attributes'] = [
-            "name" => $name,
+            "name" => $code,
             "code" => $code,
             "amount" => $isFixed ? $amount * 100 : $amount,
             "amount_type" => $isFixed ? 'fixed' : 'percent'
