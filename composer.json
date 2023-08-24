@@ -46,5 +46,8 @@
                 "Nereus": "Eduka\\Nereus\\Facades\\Nereus"
             }
         }
-    }
+    },
+
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
