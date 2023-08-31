@@ -54,6 +54,11 @@ class NereusServiceProvider extends EdukaServiceProvider
                 );
             }
 
+            // Verify if we are in the backend url (config eduka.backend.url).
+            if (NereusFacade::matchBackend()) {
+                dd('in backend');
+            }
+
             // Throw the HTTP 501 error. Limbo error.
             // abort(501, "No domain found to load a specific course or the admin backoffice");
         }

@@ -60,5 +60,13 @@ return [
         'load_providers' => [
             //\MasteringNova\MasteringNovaServiceProvider::class
         ],
+
+        'backend' => [
+            /**
+             * The backend url base domain. If a course is not matched, then it
+             * will try to match the backend.
+             */
+            'url' => env('EDUKA_BACKEND_URL', 'brunofalcao.local')
+        ]
     ],
 ];

@@ -3,6 +3,7 @@
 namespace Eduka\Nereus;
 
 use Brunocfalcao\Cerebrus\ConcernsSessionPersistence;
+use Brunocfalcao\LaravelHelpers\Utils\DomainPatternIdentifier;
 use Eduka\Cube\Models\Course;
 use Eduka\Cube\Models\Domain;
 
@@ -46,6 +47,20 @@ class Nereus
                  return $this->course;
              })
              ->obtain();
+    }
+
+
+    /**
+     * Tries to match the backend url with the visited url. This is the
+     * complementary to the matchCourse, meaning, if we are not in a course
+     * landing page, then we need to be in a backend context.
+     *
+     *
+     * @return bool
+     */
+    public function matchBackend()
+    {
+        return $this->domain() == config('eduka.system.backend.url');
     }
 
     /**

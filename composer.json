@@ -18,6 +18,7 @@
     ],
     "require": {
         "php": "^8.0",
+        "brunocfalcao/laravel-helpers": "dev-master",
         "brunocfalcao/cerebrus": "dev-master",
         "brunocfalcao/eduka-cube": "dev-master",
         "brunocfalcao/eduka-analytics": "dev-master",
