@@ -3,7 +3,6 @@
 namespace Eduka\Nereus;
 
 use Brunocfalcao\Cerebrus\ConcernsSessionPersistence;
-use Brunocfalcao\LaravelHelpers\Utils\DomainPatternIdentifier;
 use Eduka\Cube\Models\Course;
 use Eduka\Cube\Models\Domain;
 
@@ -48,7 +47,6 @@ class Nereus
              })
              ->obtain();
     }
-
 
     /**
      * Tries to match the backend url with the visited url. This is the
