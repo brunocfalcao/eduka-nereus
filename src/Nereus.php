@@ -23,11 +23,11 @@ class Nereus
 
         $this->withPrefix('eduka:nereus:course')
              ->invalidateIf(function () {
-                /**
-                 * Invalidate if the domain host session is different from the
-                 * visitor domain host.
-                 */
-                return request()->getHost() != $this->obtain();
+                 /**
+                  * Invalidate if the domain host session is different from the
+                  * visitor domain host.
+                  */
+                 return request()->getHost() != $this->obtain();
              });
     }
 
@@ -43,7 +43,7 @@ class Nereus
 
         $this->withPrefix('eduka:nereus:course')
              ->persist(function () {
-                return $this->course;
+                 return $this->course;
              })
              ->obtain();
     }
@@ -71,6 +71,7 @@ class Nereus
 
     /**
      * [matchCourseByLoadedProviders description]
+     *
      * @return [type] [description]
      */
     public function matchCourseByLoadedProviders()

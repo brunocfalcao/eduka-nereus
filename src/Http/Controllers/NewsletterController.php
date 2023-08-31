@@ -18,6 +18,7 @@ class NewsletterController extends Controller
     {
         $this->session = $session;
     }
+
     /**
      * To subscribe a user to the newsletter, we at first check
      * if the given email is already registered to this course's
@@ -26,7 +27,6 @@ class NewsletterController extends Controller
      * if yes, we notify the user.
      * else we create a new subscriber.
      *
-     * @param Request $request
      *
      * @return void
      */
@@ -49,22 +49,22 @@ class NewsletterController extends Controller
                 ->back()
                 ->withErrors([
                     'subscriber.message' => 'you have already subscribed to this newsletter',
-                ],'subscribeToNewsletter');
+                ], 'subscribeToNewsletter');
         }
 
         $subscriber = Subscriber::create([
-            'course_id' => $request->get('course_id',$course->id),
+            'course_id' => $request->get('course_id', $course->id),
             'email' => $request->get('email'),
         ]);
 
         event(new SubscriberCreated($subscriber, $course));
 
-        $this->session->set('subscribed_' . $course->id  . '_newsletter', true);
+        $this->session->set('subscribed_'.$course->id.'_newsletter', true);
 
         return redirect()
             ->back()
             ->with([
-                'notification.newsletter.message' => 'you have successfully subscribed to the newsletter.'
+                'notification.newsletter.message' => 'you have successfully subscribed to the newsletter.',
             ]);
     }
 }

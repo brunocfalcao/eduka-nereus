@@ -5,17 +5,16 @@ namespace Eduka\Nereus;
 use Brunocfalcao\Cerebrus\Cerebrus;
 use Eduka\Abstracts\Classes\EdukaServiceProvider;
 use Eduka\Analytics\Middleware\TrackVisit;
-use Illuminate\Support\Facades\Route;
 use Eduka\Nereus\Commands\Migrate;
 use Eduka\Nereus\Facades\Nereus as NereusFacade;
-use MasteringNova\MasteringNovaServiceProvider;
 use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
 
 class NereusServiceProvider extends EdukaServiceProvider
 {
     public const COURSE_SESSION_KEY = 'course';
+
     public const NONCE_KEY = 'nonce';
 
     public $course;
@@ -70,7 +69,6 @@ class NereusServiceProvider extends EdukaServiceProvider
         $this->app->bind('eduka-nereus', function () {
             return new Nereus();
         });
-
 
         $this->registerAdditionalProviders();
     }

@@ -47,7 +47,7 @@ class Migrate extends EdukaCommand
 
             $options = [];
 
-            if($this->option('seeder')) {
+            if ($this->option('seeder')) {
                 $options = [
                     '--seed' => true,
                     '--seeder' => $this->option('seeder'),
