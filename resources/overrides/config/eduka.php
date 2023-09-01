@@ -68,5 +68,23 @@ return [
              */
             'url' => env('EDUKA_BACKEND_URL', 'brunofalcao.local'),
         ],
+
+        /**
+         * The assets transfer will run on each composer update to copy all
+         * the assets from resources/assets from each course landing page, and
+         * from the backend, to the main laravel resources path, grouped by
+         * vendor name. This is because the Vite::asset() on each course package
+         * doesn't locate assets inside the custom course package, but only
+         * on the main resource() folder.
+         *
+         * Each entry has the key as the vendor name so we can search it on the
+         * vendors/brunocfalcao directory. Inside it will always be
+         * resource/assets that will be copied to the main
+         * resources/<vendor-name>/assets.
+         */
+        'assets-transfer-vendors' => [
+            'course-mastering-nova',
+            'dev',
+        ],
     ],
 ];

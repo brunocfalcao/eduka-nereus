@@ -6,6 +6,7 @@ use Brunocfalcao\Cerebrus\Cerebrus;
 use Eduka\Abstracts\Classes\EdukaServiceProvider;
 use Eduka\Analytics\Middleware\TrackVisit;
 use Eduka\Nereus\Commands\Migrate;
+use Eduka\Nereus\Commands\PublishAssets;
 use Eduka\Nereus\Facades\Nereus as NereusFacade;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\RateLimiter;
@@ -87,6 +88,7 @@ class NereusServiceProvider extends EdukaServiceProvider
     {
         $this->commands([
             Migrate::class,
+            PublishAssets::class,
         ]);
     }
 
