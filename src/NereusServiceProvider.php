@@ -57,7 +57,8 @@ class NereusServiceProvider extends EdukaServiceProvider
 
             // Verify if we are in the backend url (config eduka.backend.url).
             if (NereusFacade::matchBackend()) {
-                dd('in backend');
+                $this->loadBackendRoutes();
+                $this->registerBackendServiceProvider();
             }
 
             // Throw the HTTP 501 error. Limbo error.
@@ -92,6 +93,19 @@ class NereusServiceProvider extends EdukaServiceProvider
         ]);
     }
 
+    protected function loadBackendRoutes()
+    {
+        $routesPath = __DIR__.'/../routes/backend.php';
+
+        Route::middleware([
+            'web',
+            TrackVisit::class,
+        ])
+        ->group(function () use ($routesPath) {
+            include $routesPath;
+        });
+    }
+
     protected function loadFrontendRoutes()
     {
         if ($this->course->isPrelaunched()) {
@@ -109,6 +123,12 @@ class NereusServiceProvider extends EdukaServiceProvider
         ->group(function () use ($routesPath) {
             include $routesPath;
         });
+    }
+
+    protected function registerBackendServiceProvider()
+    {
+        // It's always the brunocfalcao/eduka-dev package.
+        app()->register(\Eduka\Dev\DevServiceProvider::class);
     }
 
     protected function registerCourseServiceProvider()
