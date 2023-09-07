@@ -19,7 +19,7 @@ class NereusServiceProvider extends EdukaServiceProvider
 
     public const NONCE_KEY = 'nonce';
 
-    public Course $course;
+    public ?Course $course;
 
     public function boot()
     {
