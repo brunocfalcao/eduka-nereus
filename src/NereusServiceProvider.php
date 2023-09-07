@@ -5,6 +5,7 @@ namespace Eduka\Nereus;
 use Brunocfalcao\Cerebrus\Cerebrus;
 use Eduka\Abstracts\Classes\EdukaServiceProvider;
 use Eduka\Analytics\Middleware\TrackVisit;
+use Eduka\Cube\Models\Course;
 use Eduka\Nereus\Commands\Migrate;
 use Eduka\Nereus\Commands\PublishAssets;
 use Eduka\Nereus\Facades\Nereus as NereusFacade;
@@ -18,7 +19,7 @@ class NereusServiceProvider extends EdukaServiceProvider
 
     public const NONCE_KEY = 'nonce';
 
-    public $course;
+    public Course $course;
 
     public function boot()
     {
