@@ -144,7 +144,7 @@ class NereusServiceProvider extends EdukaServiceProvider
 
     protected function registerAdditionalProviders()
     {
-        $providers = config('eduka.system.load_providers');
+        $providers = config('eduka.load_providers');
 
         if ($providers) {
             foreach ($providers as $provider) {

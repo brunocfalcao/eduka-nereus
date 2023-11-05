@@ -58,7 +58,7 @@ class Nereus
      */
     public function matchBackend()
     {
-        return $this->domain() == config('eduka.system.backend.url');
+        return $this->domain() == config('eduka.backend.url');
     }
 
     /**
@@ -89,7 +89,7 @@ class Nereus
      */
     public function matchCourseByLoadedProviders()
     {
-        foreach (config('eduka.system.load_providers') as $loadedProvider) {
+        foreach (config('eduka.load_providers') as $loadedProvider) {
             // Remove first backslash and the ::class at the end.
 
             if (app()->getProviders($loadedProvider)) {
