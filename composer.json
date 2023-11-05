@@ -27,6 +27,7 @@
         "brunocfalcao/eduka-services": "dev-master",
         "brunocfalcao/eduka-migrations": "dev-master",
         "brunocfalcao/eduka-ui": "dev-master",
+        "brunocfalcao/eduka-nova": "dev-master",
         "hibit-dev/geodetect" : "v1.1.0"
     },
     "autoload": {
