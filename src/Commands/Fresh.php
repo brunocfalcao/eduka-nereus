@@ -7,12 +7,11 @@ use Eduka\Cube\Models\Course;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Process;
 
-class Migrate extends EdukaCommand
+class Fresh extends EdukaCommand
 {
-    protected $signature = 'eduka:migrate 
-                            {--package= : The course package value, defined in eduka.php config}';
+    protected $signature = 'eduka:fresh';
 
-    protected $description = 'Runs a course migration, or all courses migrations defined in eduka config';
+    protected $description = 'Refreshes the eduka database, re-runs all courses migrations and publishes their respective assets';
 
     public function __construct()
     {
@@ -28,18 +27,26 @@ class Migrate extends EdukaCommand
             \___.\___|`___||_\_\<___|
         ');
 
-        $courses = $this->option('package') ?
-                        config('eduka.courses.'.$this->option('package')) :
-                        config('eduka.courses');
+        $courses = config('eduka.courses');
+
+        // Run php artisan migrate:fresh.
+        $this->info('Running PHP artisan migrate:fresh for eduka database...');
+        $result = Process::run('php artisan migrate:fresh --force');
+        $this->info($result->output());
 
         foreach ($courses as $package => $course) {
             // Boot course service provider.
-            $this->info('Booting '.$package.' service provider ...');
+            $this->paragraph('Booting '.$package.' service provider ...');
             app()->register($course['provider-class']);
 
             // Run php artisan migrate.
             $this->info('Running PHP artisan migrate (for seeders)...');
             $result = Process::run('php artisan migrate');
+            $this->info($result->output());
+
+            // Run php artisan vendor:publish for the respective service provider.
+            $this->info('Publishing course assets for service provider '.$course['provider-class'].'...');
+            $result = Process::run('php artisan vendor:publish --force --provider="'.$course['provider-class'].'"');
             $this->info($result->output());
         }
 

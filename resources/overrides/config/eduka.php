@@ -50,6 +50,27 @@ return [
         //\MasteringNova\MasteringNovaServiceProvider::class
     ],
 
+    /**
+     * All the courses that are loaded into eduka, even if it's not rendered
+     * at the moment by the visitor, need to be listed here. This way eduka
+     * can perform activities like migrate, migrate:fresh, vendor publish,
+     * all for each of the courses that are mentioned here. This doesn't
+     * invalidate that the courses table needs still to be populated.
+     */
+    'courses' => [
+        [
+            // E.g.: brunocfalcao/course-mastering-nova
+            'package-name' => '',
+
+            // E.g.: MasteringNova\Database\Seeders\MasteringNovaCourseSeeder
+            'seeder-class' => '',
+
+            // E.g.: MasteringNova\MasteringNovaServiceProvider
+            'provider-class' => '',
+        ],
+        // ...
+    ],
+
     'backend' => [
         /**
          * The backend url base domain. If a course is not matched, then it
