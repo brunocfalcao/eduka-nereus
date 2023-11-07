@@ -6,6 +6,7 @@ use Eduka\Abstracts\Classes\EdukaCommand;
 use Eduka\Cube\Models\Course;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Process;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class Fresh extends EdukaCommand
 {
@@ -41,8 +42,10 @@ class Fresh extends EdukaCommand
 
             // Run php artisan migrate.
             $this->info('Running PHP artisan migrate (for seeders)...');
-            $result = Process::run('php artisan migrate');
-            $this->info($result->output());
+
+            $output = new BufferedOutput();
+            Artisan::call('migrate', [], $output);
+            $this->info($output->fetch());
 
             // Run php artisan vendor:publish for the respective service provider.
             $this->info('Publishing course assets for service provider '.$course['provider-class'].'...');
