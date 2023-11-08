@@ -1,10 +1,14 @@
 <?php
 
+use Eduka\Cube\Models\Chapter;
+use Eduka\Cube\Models\Coupon;
 use Eduka\Cube\Models\Course;
 use Eduka\Cube\Models\Order;
+use Eduka\Cube\Models\Series;
+use Eduka\Cube\Models\Video;
+use Eduka\Cube\Models\User;
 use Eduka\Nereus\Http\Controllers\NewsletterController;
 use Eduka\Nereus\Http\Controllers\Prelaunched\Welcome;
-use Eduka\Payments\Actions\LemonSqueezyWebhookPayloadExtractor;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [Welcome::class, 'index'])
@@ -13,17 +17,30 @@ Route::get('/', [Welcome::class, 'index'])
 Route::post('/subscribe-to-newsletter', [NewsletterController::class, 'subscribeToNewsletter'])
     ->name('subscribe.newsletter');
 
-Route::get('/x', function () {
+Route::get('/dev/resources/{resource}/{id?}', function (string $resource, string $id = null) {
+    abort_unless(config('app.env') === 'local', 404);
 
-    $orders = Order::all();
+    $model = match ($resource) {
+        'user', 'users'       => User::query(),
+        'chapter', 'chapters' => Chapter::query(),
+        'course', 'courses'   => Course::query(),
+        'order', 'orders'     => Order::query(),
+        'series', 'series'    => Series::query(),
+        'video', 'videos'     => Video::query(),
+        'coupon', 'coupons'   => Coupon::query(),
 
-    foreach($orders as $order) {
-        // $json = json_decode($order->response_body, true);
+        default => null,
+    };
 
-        // $extracted = (new LemonSqueezyWebhookPayloadExtractor)->extract($json);
-        // $order->update($extracted);
-        $order->update([
-            'created_at' => now()->subDays(random_int(0,90)),
-        ]);
+    if (!$model) {
+        return [
+            'no resource'
+        ];
     }
+
+    if ($id) {
+        $model = $model->where('id', $id);
+    }
+
+    return $model->orderBy('id')->get();
 });
