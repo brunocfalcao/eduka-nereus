@@ -3,9 +3,9 @@
 namespace Eduka\Nereus;
 
 use Brunocfalcao\Cerebrus\Cerebrus;
+use Brunocfalcao\Tracer\Middleware\VisitTracing;
 use Eduka\Abstracts\Classes\EdukaServiceProvider;
 use Eduka\Cube\Models\Course;
-use Eduka\Nereus\Commands\CourseInstall;
 use Eduka\Nereus\Commands\Fresh;
 use Eduka\Nereus\Commands\Migrate;
 use Eduka\Nereus\Commands\PublishAssets;
@@ -32,48 +32,56 @@ class NereusServiceProvider extends EdukaServiceProvider
 
         $this->loadCommands();
 
+        $domainMatched = false;
+
         /**
          * Nereus allows 2 site contexts:
          * - In frontend, the visitor is on an identified course domain.
          * - In backend, the visitor is on the her backend (to see videos).
          */
-        if (! $this->app->runningInConsole()) {
-            $domainMatched = false;
+        $this->course = NereusFacade::matchCourse();
 
-            $this->course = NereusFacade::matchCourse() ??
-                            NereusFacade::matchCourseByLoadedProviders();
+        if ($this->course) {
+            // Load common routes already.
+            $this->loadCommonRoutes();
 
-            if ($this->course) {
-                /**
-                 * Load the routes, analytics middleware, course service
-                 * provider, etc.
-                 */
-                $this->loadFrontendRoutes();
-                $this->registerCourseServiceProvider();
+            /**
+             * Load the routes, analytics middleware, course service
+             * provider, etc.
+             */
+            $this->loadFrontendRoutes();
 
-                /**
-                 * Load the current course object into session.
-                 */
-                (new Cerebrus())->set(
-                    self::COURSE_SESSION_KEY,
-                    $this->course,
-                );
+            /**
+             * We will then register the course provider. No need to verify
+             * if this course service provider is already registered via the
+             * load_providers config key, since laravel already does that.
+             */
+            $this->course->registerSelfProvider();
 
-                $domainMatched = true;
-            }
+            /**
+             * Load the current course object into session.
+             */
+            (new Cerebrus())->set(
+                self::COURSE_SESSION_KEY,
+                $this->course,
+            );
 
-            // Verify if we are in the backend url (config eduka.backend.url).
-            if (NereusFacade::matchBackend()) {
-                $this->loadBackendRoutes();
-                $this->registerBackendServiceProvider();
+            $domainMatched = true;
+        }
 
-                $domainMatched = true;
-            }
+        // Verify if we are in the backend url (config eduka.backend.url).
+        if (NereusFacade::matchBackend() && ! $domainMatched) {
+            $this->loadBackendRoutes();
 
-            // Throw the HTTP 501 error. Limbo error.
-            if (! $domainMatched) {
-                abort(501, 'No domain found to load a specific course or the admin backoffice');
-            }
+            // It's always the brunocfalcao/eduka-dev package.
+            app()->register(\Eduka\Dev\DevServiceProvider::class);
+
+            $domainMatched = true;
+        }
+
+        // Throw the HTTP 501 error. Limbo error.
+        if (! $domainMatched && ! app()->runningInConsole()) {
+            abort(501, 'No domain found to load a specific course or the admin backoffice');
         }
 
         parent::boot();
@@ -102,9 +110,21 @@ class NereusServiceProvider extends EdukaServiceProvider
         $this->commands([
             Migrate::class,
             PublishAssets::class,
-            CourseInstall::class,
             Fresh::class,
         ]);
+    }
+
+    protected function loadCommonRoutes()
+    {
+        $routesPath = __DIR__.'/../routes/common.php';
+
+        Route::middleware([
+            'web',
+            VisitTracing::class,
+        ])
+        ->group(function () use ($routesPath) {
+            include $routesPath;
+        });
     }
 
     protected function loadBackendRoutes()
@@ -113,7 +133,7 @@ class NereusServiceProvider extends EdukaServiceProvider
 
         Route::middleware([
             'web',
-            TrackVisit::class,
+            VisitTracing::class,
         ])
         ->group(function () use ($routesPath) {
             include $routesPath;
@@ -136,22 +156,6 @@ class NereusServiceProvider extends EdukaServiceProvider
         ->group(function () use ($routesPath) {
             include $routesPath;
         });
-    }
-
-    protected function registerBackendServiceProvider()
-    {
-        // It's always the brunocfalcao/eduka-dev package.
-        app()->register(\Eduka\Dev\DevServiceProvider::class);
-    }
-
-    protected function registerCourseServiceProvider()
-    {
-        /**
-         * We will then register the course provider. No need to verify
-         * if this course service provider is already registered via the
-         * load_providers config key, since laravel already does that.
-         */
-        $this->course->registerSelfProvider();
     }
 
     protected function registerAdditionalProviders()

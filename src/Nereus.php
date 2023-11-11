@@ -83,23 +83,6 @@ class Nereus
     }
 
     /**
-     * [matchCourseByLoadedProviders description]
-     *
-     * @return [type] [description]
-     */
-    public function matchCourseByLoadedProviders()
-    {
-        foreach (config('eduka.load_providers') as $loadedProvider) {
-            // Remove first backslash and the ::class at the end.
-
-            if (app()->getProviders($loadedProvider)) {
-                // Let's check if we have that provider as a course.
-                return Course::firstWhere('provider_namespace', $loadedProvider);
-            }
-        }
-    }
-
-    /**
      * Tries to match an eduka course by the domain used by the visitor.
      *
      * @return \Eduka\Cube\Models\Course
@@ -113,7 +96,7 @@ class Nereus
         }
 
         if (blank($domain->course)) {
-            abort('501', 'No course associated with this domain');
+            abort('501', 'Domain is registered, but no course is related with it');
         }
 
         return $domain->course;

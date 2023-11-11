@@ -42,15 +42,6 @@ return [
     'stop_notifications' => env('EDUKA_STOP_NOTIFICATIONS', true),
 
     /**
-     * Providers that will be additionally loaded, no matter what
-     * site context you are. You can use to load providers you want
-     * to test routes, or other things.
-     */
-    'load_providers' => [
-        //\MasteringNova\MasteringNovaServiceProvider::class
-    ],
-
-    /**
      * All the courses that are loaded into eduka, even if it's not rendered
      * at the moment by the visitor, need to be listed here. This way eduka
      * can perform activities like migrate, migrate:fresh, vendor publish,
