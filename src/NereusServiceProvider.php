@@ -4,7 +4,6 @@ namespace Eduka\Nereus;
 
 use Brunocfalcao\Cerebrus\Cerebrus;
 use Eduka\Abstracts\Classes\EdukaServiceProvider;
-use Eduka\Analytics\Middleware\TrackVisit;
 use Eduka\Cube\Models\Course;
 use Eduka\Nereus\Commands\CourseInstall;
 use Eduka\Nereus\Commands\Fresh;
@@ -39,6 +38,8 @@ class NereusServiceProvider extends EdukaServiceProvider
          * - In backend, the visitor is on the her backend (to see videos).
          */
         if (! $this->app->runningInConsole()) {
+            $domainMatched = false;
+
             $this->course = NereusFacade::matchCourse() ??
                             NereusFacade::matchCourseByLoadedProviders();
 
@@ -50,23 +51,31 @@ class NereusServiceProvider extends EdukaServiceProvider
                 $this->loadFrontendRoutes();
                 $this->registerCourseServiceProvider();
 
-                // new Cerebrus Session
-                // eduka-course prefix
+                /**
+                 * Load the current course object into session.
+                 */
                 (new Cerebrus())->set(
                     self::COURSE_SESSION_KEY,
                     $this->course,
                 );
+
+                $domainMatched = true;
             }
 
             // Verify if we are in the backend url (config eduka.backend.url).
             if (NereusFacade::matchBackend()) {
                 $this->loadBackendRoutes();
                 $this->registerBackendServiceProvider();
+
+                $domainMatched = true;
             }
 
             // Throw the HTTP 501 error. Limbo error.
-            // abort(501, "No domain found to load a specific course or the admin backoffice");
+            if (! $domainMatched) {
+                abort(501, 'No domain found to load a specific course or the admin backoffice');
+            }
         }
+
         parent::boot();
 
         RateLimiter::for('payment', function () {
@@ -123,7 +132,6 @@ class NereusServiceProvider extends EdukaServiceProvider
 
         Route::middleware([
             'web',
-            TrackVisit::class,
         ])
         ->group(function () use ($routesPath) {
             include $routesPath;
