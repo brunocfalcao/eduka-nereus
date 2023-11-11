@@ -9,8 +9,6 @@ class Welcome extends Controller
 {
     public function index()
     {
-        dd('hi there!');
-
         return view('course::prelaunched')
                ->with(['course' => Nereus::matchCourse()]);
     }
