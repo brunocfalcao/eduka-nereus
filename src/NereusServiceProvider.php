@@ -36,7 +36,8 @@ class NereusServiceProvider extends EdukaServiceProvider
          * In case we are running in console, sometimes we might want to
          * skip the course contextualization (like to run migrations).
          */
-        if (config('eduka.skip_course_detection') === true) {
+        if (config('eduka.skip_course_detection') === true &&
+            config('eduka.skip_course_detection')) {
             parent::boot();
 
             return;
