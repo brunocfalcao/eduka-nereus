@@ -77,8 +77,8 @@ class Nereus
     {
         $segments = DomainPatternIdentifier::parseUrl();
 
-        $computedDomain = ($segments['subdomain'] ? $segments['subdomain'] . '.' : '') .
-                          $segments['domain'] . '.' .
+        $computedDomain = ($segments['subdomain'] ? $segments['subdomain'].'.' : '').
+                          $segments['domain'].'.'.
                           $segments['top_level_domain'];
 
         return Domain::firstWhere(
