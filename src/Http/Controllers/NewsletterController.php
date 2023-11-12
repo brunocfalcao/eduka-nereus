@@ -10,7 +10,7 @@ use Eduka\Nereus\NereusServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class NewsletterController extends Controller
+class SubscribeController extends Controller
 {
     private Cerebrus $session;
 
@@ -30,14 +30,23 @@ class NewsletterController extends Controller
      *
      * @return void
      */
+
+    /**
+     * Subscribes to the course to have early access and/or a special
+     * early access discount. Normally it happens for situations that
+     * the course starts to be sold before it's completed, and also
+     * if the visitor wants to know when the course is launched.
+     */
     public function subscribeToNewsletter(Request $request)
     {
+        $course = Nereus::course();
+
         // @todo take it behind some method, so we don't missmatch the string key.
-        $course = $this->session->get(NereusServiceProvider::COURSE_SESSION_KEY);
+        //$course = $this->session->get(NereusServiceProvider::COURSE_SESSION_KEY);
 
         Validator::make($request->all(), [
             'email' => 'required|email',
-        ])->validateWithBag('subscribeToNewsletter');
+        ]);
 
         // check if user already exists or not
         $subscriberCount = Subscriber::where('email', $request->get('email'))

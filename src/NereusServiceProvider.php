@@ -2,7 +2,6 @@
 
 namespace Eduka\Nereus;
 
-use Brunocfalcao\Cerebrus\Cerebrus;
 use Brunocfalcao\Tracer\Middleware\VisitTracing;
 use Eduka\Abstracts\Classes\EdukaServiceProvider;
 use Eduka\Cube\Models\Course;
@@ -50,7 +49,7 @@ class NereusServiceProvider extends EdukaServiceProvider
          * - In frontend, the visitor is on an identified course domain.
          * - In backend, the visitor is on the her backend (to see videos).
          */
-        $this->course = NereusFacade::matchCourse();
+        $this->course = NereusFacade::course();
 
         if ($this->course) {
             // Load common routes already.
@@ -68,14 +67,6 @@ class NereusServiceProvider extends EdukaServiceProvider
              * load_providers config key, since laravel already does that.
              */
             $this->course->registerSelfProvider();
-
-            /**
-             * Load the current course object into session.
-             */
-            (new Cerebrus())->set(
-                self::COURSE_SESSION_KEY,
-                $this->course,
-            );
 
             $domainMatched = true;
         }

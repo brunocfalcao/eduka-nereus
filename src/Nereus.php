@@ -13,23 +13,10 @@ class Nereus
 
     public function __construct()
     {
-        $this->withPrefix('eduka:nereus:domain')
-            ->invalidateIf(function () {
-                /**
-                 * Invalidate if the domain host session is different from the
-                 * visitor domain host.
-                 */
-                return request()->getHost() != $this->obtain();
-            });
-
-        $this->withPrefix('eduka:nereus:course')
-             ->invalidateIf(function () {
-                 /**
-                  * Invalidate if the domain host session is different from the
-                  * visitor domain host.
-                  */
-                 return request()->getHost() != $this->obtain();
-             });
+        /**
+         * Nereus is called via a facade, so the __construct() is not
+         * always called on each Nereus method. Nothing here then.
+         */
     }
 
     /**
@@ -40,13 +27,28 @@ class Nereus
      */
     public function course()
     {
-        $this->domainMatched();
-
         $this->withPrefix('eduka:nereus:course')
-             ->persist(function () {
-                 return $this->course;
+             ->invalidateIf(function () {
+                 /**
+                  * Invalidation can occur in the following scenarios:
+                  * EDUKA_ALWAYS_INVALIDATE_COURSES=true or
+                  * Visitor getHost() != Current course session domain.
+                  */
+                 return $this->matchCourse() == null ||
+                        config('eduka.always_invalidate_courses') === true;
              })
-             ->obtain();
+             ->persist(function () {
+                 $course = $this->matchCourse();
+                 if ($course) {
+                     return $course->id;
+                 }
+             });
+
+        $courseId = $this->obtain();
+
+        if ($courseId) {
+            return Course::firstWhere('id', $courseId);
+        }
     }
 
     /**
@@ -94,12 +96,14 @@ class Nereus
      */
     public function matchCourse()
     {
+        // Verify if the current url can be a possible domain course.
         $domain = $this->matchDomain();
 
         if (! $domain) {
             return null;
         }
 
+        // Verify if, this existing database domain, has a course.
         if (blank($domain->course)) {
             abort('501', 'Domain is registered, but no course is related with it');
         }
