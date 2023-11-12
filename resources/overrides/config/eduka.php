@@ -13,6 +13,13 @@
  */
 return [
 
+    /**
+     * If we need to skip the course detection on the Nereus service provider.
+     * For instance, if we want to change the eduka database structure in the
+     * migration files, we need to have this parameter true.
+     */
+    'skip_course_detection' => env('EDUKA_SKIP_COURSE_DETECTION', false),
+
     'mail' => [
 
         /**

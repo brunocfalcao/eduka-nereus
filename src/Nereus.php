@@ -3,6 +3,7 @@
 namespace Eduka\Nereus;
 
 use Brunocfalcao\Cerebrus\ConcernsSessionPersistence;
+use Brunocfalcao\LaravelHelpers\Utils\DomainPatternIdentifier;
 use Eduka\Cube\Models\Course;
 use Eduka\Cube\Models\Domain;
 
@@ -63,7 +64,7 @@ class Nereus
 
     /**
      * Verify if the current request domain matches a possible domain
-     * in the courses scopes. The match is done in the "suffix", meaning:.
+     * in the courses scopes. The match is done in the "name", meaning:.
      *
      * request domain      course domain    result
      * staging.roche.com   roche.com        true
@@ -74,12 +75,12 @@ class Nereus
      */
     public function matchDomain()
     {
-        $fdn = $this->domain();
+        $segments = DomainPatternIdentifier::parseUrl();
 
-        $chars = strlen($fdn);
-
-        return Domain::whereRaw("right(suffix, {$chars}) = ?", [$fdn])
-                              ->first();
+        return Domain::firstWhere(
+            'name',
+            "{$segments['domain']}.{$segments['top_level_domain']}"
+        );
     }
 
     /**
