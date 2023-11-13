@@ -52,6 +52,8 @@ class NereusServiceProvider extends EdukaServiceProvider
         $this->course = NereusFacade::course();
 
         if ($this->course) {
+            info('course detected: ' . $this->course->name);
+
             // Load common routes already.
             $this->loadCommonRoutes();
 
