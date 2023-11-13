@@ -38,19 +38,24 @@ class Fresh extends EdukaCommand
         foreach ($courses as $package => $course) {
             // Boot course service provider.
             $this->paragraph('Booting '.$package.' service provider ...');
-            app()->register($course['provider-class']);
 
-            // Run php artisan migrate.
-            $this->info('Running PHP artisan migrate (for seeders)...');
+            if (class_exists($course['provider-class'])) {
+                app()->register($course['provider-class']);
 
-            $output = new BufferedOutput();
-            Artisan::call('migrate', [], $output);
-            $this->info($output->fetch());
+                // Run php artisan migrate.
+                $this->info('Running PHP artisan migrate (for seeders)...');
 
-            // Run php artisan vendor:publish for the respective service provider.
-            $this->info('Publishing course assets for service provider '.$course['provider-class'].'...');
-            $result = Process::run('php artisan vendor:publish --force --provider="'.$course['provider-class'].'"');
-            $this->info($result->output());
+                $output = new BufferedOutput();
+                Artisan::call('migrate', [], $output);
+                $this->info($output->fetch());
+
+                // Run php artisan vendor:publish for the respective service provider.
+                $this->info('Publishing course assets for service provider '.$course['provider-class'].'...');
+                $result = Process::run('php artisan vendor:publish --force --provider="'.$course['provider-class'].'"');
+                $this->info($result->output());
+            } else {
+                $this->error('Service provider is not autoloaded. Skipping...');
+            }
         }
 
         $this->paragraph('All done!');

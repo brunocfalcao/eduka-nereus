@@ -6,6 +6,7 @@ use Eduka\Abstracts\Classes\EdukaCommand;
 use Eduka\Cube\Models\Course;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Process;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class Migrate extends EdukaCommand
 {
@@ -39,8 +40,13 @@ class Migrate extends EdukaCommand
 
             // Run php artisan migrate.
             $this->info('Running PHP artisan migrate (for seeders)...');
-            $result = Process::run('php artisan migrate');
-            $this->info($result->output());
+
+            $output = new BufferedOutput();
+            Artisan::call('migrate', [], $output);
+            $this->info($output->fetch());
+
+            //$result = Process::run('php artisan migrate');
+            //$this->info($result->output());
         }
 
         $this->paragraph('All done!');
