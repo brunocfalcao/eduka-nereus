@@ -121,8 +121,7 @@ class NereusServiceProvider extends EdukaServiceProvider
         $routesPath = __DIR__.'/../routes/common.php';
 
         Route::middleware([
-            'web',
-            VisitTracing::class,
+            'web'
         ])
         ->group(function () use ($routesPath) {
             include $routesPath;
@@ -134,8 +133,7 @@ class NereusServiceProvider extends EdukaServiceProvider
         $routesPath = __DIR__.'/../routes/backend.php';
 
         Route::middleware([
-            'web',
-            VisitTracing::class,
+            'web'
         ])
         ->group(function () use ($routesPath) {
             include $routesPath;
