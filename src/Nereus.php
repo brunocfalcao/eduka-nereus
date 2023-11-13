@@ -39,9 +39,9 @@ class Nereus
              })
              ->persist(function () {
                  $course = $this->matchCourse();
-                if ($course) {
-                    return $course->id;
-                }
+                 if ($course) {
+                     return $course->id;
+                 }
              });
 
         $courseId = $this->obtain();
@@ -79,13 +79,9 @@ class Nereus
     {
         $segments = DomainPatternIdentifier::parseUrl();
 
-        info('segments: ' . json_encode($segments));
-
         $computedDomain = ($segments['subdomain'] ? $segments['subdomain'].'.' : '').
                           $segments['domain'].'.'.
                           $segments['top_level_domain'];
-
-        info('Computed domain: ' . $computedDomain);
 
         return Domain::firstWhere(
             'name',
