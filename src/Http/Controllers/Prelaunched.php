@@ -33,6 +33,7 @@ class Prelaunched extends Controller
 
         $course = Nereus::course();
 
+        // Check if the subscriber + course already exists on the database.
         if (! Subscriber::where('email', request()->email)
                         ->where('course_id', $course->id)
                         ->exists()) {
@@ -42,6 +43,11 @@ class Prelaunched extends Controller
             ]);
         }
 
+        /**
+         * If the subscriber email + course already subscribed then just
+         * give a nice message saying it's already subscribed. If not,
+         * then subscribe it with a thank you message.
+         */
         return back()->with(
             'message',
             isset($subscriber) ?

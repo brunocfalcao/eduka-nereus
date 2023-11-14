@@ -2,7 +2,6 @@
 
 namespace Eduka\Nereus;
 
-use Brunocfalcao\Tracer\Middleware\VisitTracing;
 use Eduka\Abstracts\Classes\EdukaServiceProvider;
 use Eduka\Cube\Models\Course;
 use Eduka\Nereus\Commands\Fresh;
@@ -121,7 +120,7 @@ class NereusServiceProvider extends EdukaServiceProvider
         $routesPath = __DIR__.'/../routes/common.php';
 
         Route::middleware([
-            'web'
+            'web',
         ])
         ->group(function () use ($routesPath) {
             include $routesPath;
@@ -133,7 +132,7 @@ class NereusServiceProvider extends EdukaServiceProvider
         $routesPath = __DIR__.'/../routes/backend.php';
 
         Route::middleware([
-            'web'
+            'web',
         ])
         ->group(function () use ($routesPath) {
             include $routesPath;
