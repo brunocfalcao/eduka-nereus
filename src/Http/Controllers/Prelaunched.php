@@ -9,7 +9,6 @@ use Eduka\Nereus\Facades\Nereus;
 class Prelaunched extends Controller
 {
     public const SUBSCRIPTION_COMPLETED = 'subscription-completed';
-
     public const SUBSCRIPTION_REPEATED = 'subscription-repeated';
 
     public function __construct()

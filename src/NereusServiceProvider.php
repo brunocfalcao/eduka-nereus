@@ -16,8 +16,6 @@ class NereusServiceProvider extends EdukaServiceProvider
 {
     public const COURSE_SESSION_KEY = 'course';
 
-    public const NONCE_KEY = 'nonce';
-
     public ?Course $course;
 
     public function boot()

@@ -27,8 +27,8 @@ return [
          * email contextualized, then it will fallback to this email.
          */
         'from' => [
-            'name' => env('EDUKA_FALLBACK_NAME', null),
-            'email' => env('EDUKA_FALLBACK_EMAIL', null),
+            'name' => env('EDUKA_FALLBACK_NAME'),
+            'email' => env('EDUKA_FALLBACK_EMAIL'),
         ],
 
         /**
@@ -37,7 +37,7 @@ return [
          * notifications.
          */
         'to' => [
-            'email' => env('EDUKA_ADMIN_TO', null),
+            'email' => env('EDUKA_ADMIN_TO'),
         ],
     ],
 
@@ -46,7 +46,7 @@ return [
      * configuration is global, means that ALL emails will not be sent,
      * neither the respective notification will be recorded (in case).
      */
-    'stop_notifications' => env('EDUKA_STOP_NOTIFICATIONS', true),
+    'stop_notifications' => env('EDUKA_STOP_NOTIFICATIONS', false),
 
     /**
      * All the courses that are loaded into eduka, even if it's not rendered
@@ -54,27 +54,24 @@ return [
      * can perform activities like migrate, migrate:fresh, vendor publish,
      * all for each of the courses that are mentioned here. This doesn't
      * invalidate that the courses table needs still to be populated.
+     *
+     * E.g.:
+     *      'brunocfalcao/course-mastering-nova' => [
+     *      'seeder-class' => 'MasteringNova\Database\Seeders\MasteringNovaCourseSeeder',
+     *      'provider-class' => 'MasteringNova\MasteringNovaServiceProvider',
+     *   ],
      */
     'courses' => [
-        [
-            // E.g.: brunocfalcao/course-mastering-nova
-            'package-name' => '',
-
-            // E.g.: MasteringNova\Database\Seeders\MasteringNovaCourseSeeder
-            'seeder-class' => '',
-
-            // E.g.: MasteringNova\MasteringNovaServiceProvider
-            'provider-class' => '',
-        ],
-        // ...
     ],
 
     'backend' => [
         /**
          * The backend url base domain. If a course is not matched, then it
          * will try to match the respective default backend URL here.
+         *
+         * E.g.: brunofalcao.local
          */
-        'url' => env('EDUKA_BACKEND_URL', 'brunofalcao.local'),
+        'url' => env('EDUKA_BACKEND_URL'),
     ],
 
     /**
@@ -89,9 +86,12 @@ return [
      * vendors/brunocfalcao directory. Inside it will always be
      * resource/assets that will be copied to the main
      * resources/<vendor-name>/assets.
+     *
+     * e.g.: course-mastering-nova
      */
     'assets-transfer-vendors' => [
-        'course-mastering-nova',
-        'dev',
     ],
+
+    'currency' => env('EDUKA_CURRENCY', 'EUR'),
+    'currency_symbol' => env('EDUKA_CURRENCY_SYMBOL', '€'),
 ];
