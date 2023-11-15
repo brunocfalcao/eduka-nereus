@@ -20,6 +20,29 @@ class Nereus
     }
 
     /**
+     * It will load a translation key/value. But smartly will check
+     * if you have a filename with the course canonical. If so, then
+     * instead of loading the translation key from nereus.php i
+     * will load it from the course canonical.
+     *
+     * @param  mixed $args
+     * @return string
+     */
+    public function trans($key, $params = [])
+    {
+        if (self::course() !== null) {
+            $canonical = self::course()->canonical;
+            $locale = app()->getlocale();
+
+            if (file_exists(resource_path("lang/{$locale}/{$canonical}.php"))) {
+                return __("{$canonical}.{$key}", $params);
+            }
+        }
+
+        return __("nereus.{$key}", $params);
+    }
+
+    /**
      * Returns the current course instance, for the respetive domain.
      * Fallback HTTP error.
      *
@@ -39,9 +62,9 @@ class Nereus
              })
              ->persist(function () {
                  $course = $this->matchCourse();
-                 if ($course) {
-                     return $course->id;
-                 }
+                if ($course) {
+                    return $course->id;
+                }
              });
 
         $courseId = $this->obtain();
