@@ -26,8 +26,7 @@
         "brunocfalcao/eduka-abstracts": "dev-master",
         "brunocfalcao/eduka-services": "dev-master",
         "brunocfalcao/eduka-migrations": "dev-master",
-        "brunocfalcao/eduka-nova": "dev-master",
-        "hibit-dev/geodetect" : "v1.1.0"
+        "brunocfalcao/eduka-nova": "dev-master"
     },
     "autoload": {
         "psr-4": {

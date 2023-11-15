@@ -25,7 +25,7 @@ class Nereus
      * instead of loading the translation key from nereus.php i
      * will load it from the course canonical.
      *
-     * @param  mixed $args
+     * @param  mixed  $args
      * @return string
      */
     public function trans($key, $params = [])
@@ -62,9 +62,9 @@ class Nereus
              })
              ->persist(function () {
                  $course = $this->matchCourse();
-                if ($course) {
-                    return $course->id;
-                }
+                 if ($course) {
+                     return $course->id;
+                 }
              });
 
         $courseId = $this->obtain();
