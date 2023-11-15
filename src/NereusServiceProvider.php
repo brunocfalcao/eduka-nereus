@@ -128,12 +128,21 @@ class NereusServiceProvider extends EdukaServiceProvider
     protected function loadBackendRoutes()
     {
         $routesPath = __DIR__.'/../routes/backend.php';
+        $apiRoutesPath = __DIR__.'/../routes/api.php';
 
         Route::middleware([
             'web',
         ])
         ->group(function () use ($routesPath) {
             include $routesPath;
+        });
+
+        // Load the payments webhook without on the api middleware.
+        Route::middleware([
+            'api',
+        ])
+        ->group(function () use ($apiRoutesPath) {
+            include $apiRoutesPath;
         });
     }
 
