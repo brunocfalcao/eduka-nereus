@@ -93,11 +93,6 @@ class NereusServiceProvider extends EdukaServiceProvider
         });
     }
 
-    protected function loadViteManifest(string $canonical)
-    {
-        Vite::macro('image', fn (string $asset) => $this->asset("{$asset}", $canonical));
-    }
-
     public function register()
     {
         $this->app->bind('eduka-nereus', function () {
@@ -105,6 +100,11 @@ class NereusServiceProvider extends EdukaServiceProvider
         });
 
         $this->registerAdditionalProviders();
+    }
+
+    protected function loadViteManifest(string $canonical)
+    {
+        Vite::macro('image', fn (string $asset) => $this->asset("{$asset}", $canonical));
     }
 
     protected function loadViewNamespaces()
