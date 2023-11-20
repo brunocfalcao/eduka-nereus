@@ -11,6 +11,7 @@ use Eduka\Nereus\Facades\Nereus as NereusFacade;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Vite;
 
 class NereusServiceProvider extends EdukaServiceProvider
 {
@@ -58,6 +59,8 @@ class NereusServiceProvider extends EdukaServiceProvider
              */
             $this->loadFrontendRoutes();
 
+            $this->loadViteManifest($this->course->canonical);
+
             /**
              * We will then register the course provider. No need to verify
              * if this course service provider is already registered via the
@@ -88,6 +91,11 @@ class NereusServiceProvider extends EdukaServiceProvider
         RateLimiter::for('payment', function () {
             return Limit::perMinute(5); // @todo take from config
         });
+    }
+
+    protected function loadViteManifest(string $canonical)
+    {
+        Vite::macro('image', fn (string $asset) => $this->asset("{$asset}", $canonical));
     }
 
     public function register()
