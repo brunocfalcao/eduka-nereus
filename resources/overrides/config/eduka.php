@@ -18,7 +18,7 @@ return [
      * For instance, if we want to change the eduka database structure in the
      * migration files, we need to have this parameter true.
      */
-    'skip_course_detection' => env('EDUKA_SKIP_COURSE_DETECTION', false),
+    'skip_domain_detection' => env('EDUKA_SKIP_DOMAIN_DETECTION', false),
 
     'mail' => [
 
@@ -94,4 +94,5 @@ return [
 
     'currency' => env('EDUKA_CURRENCY', 'EUR'),
     'currency_symbol' => env('EDUKA_CURRENCY_SYMBOL', '€'),
+    'skip_course_detection' => env('EDUKA_SKIP_COURSE_DETECTION', false),
 ];

@@ -42,35 +42,6 @@ class NereusServiceProvider extends EdukaServiceProvider
 
         $domainMatched = false;
 
-        /**
-         * Nereus allows 2 site contexts:
-         * - In frontend, the visitor is on an identified course domain.
-         * - In backend, the visitor is on the her backend (to see videos).
-         */
-        $this->course = NereusFacade::course();
-
-        if ($this->course) {
-            // Load common routes already.
-            $this->loadCommonRoutes();
-
-            /**
-             * Load the routes, analytics middleware, course service
-             * provider, etc.
-             */
-            $this->loadFrontendRoutes();
-
-            $this->loadViteManifest($this->course->canonical);
-
-            /**
-             * We will then register the course provider. No need to verify
-             * if this course service provider is already registered via the
-             * load_providers config key, since laravel already does that.
-             */
-            $this->course->registerSelfProvider();
-
-            $domainMatched = true;
-        }
-
         // Verify if we are in the backend url (config eduka.backend.url).
         if (NereusFacade::matchBackend() && ! $domainMatched) {
             $this->loadBackendRoutes();
@@ -79,6 +50,37 @@ class NereusServiceProvider extends EdukaServiceProvider
             app()->register(\Eduka\Dev\DevServiceProvider::class);
 
             $domainMatched = true;
+        }
+
+        /**
+         * Nereus allows 2 site contexts:
+         * - In frontend, the visitor is on an identified course domain.
+         * - In backend, the visitor is on the her backend (to see videos).
+         */
+        if (! $domainMatched) {
+            $this->course = NereusFacade::course();
+
+            if ($this->course) {
+                // Load common routes already.
+                $this->loadCommonRoutes();
+
+                /**
+                 * Load the routes, analytics middleware, course service
+                 * provider, etc.
+                 */
+                $this->loadFrontendRoutes();
+
+                $this->loadViteManifest($this->course->canonical);
+
+                /**
+                 * We will then register the course provider. No need to verify
+                 * if this course service provider is already registered via the
+                 * load_providers config key, since laravel already does that.
+                 */
+                $this->course->registerSelfProvider();
+
+                $domainMatched = true;
+            }
         }
 
         // Throw the HTTP 501 error. Limbo error.

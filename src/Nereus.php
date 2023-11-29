@@ -6,6 +6,7 @@ use Brunocfalcao\Cerebrus\ConcernsSessionPersistence;
 use Brunocfalcao\LaravelHelpers\Utils\DomainPatternIdentifier;
 use Eduka\Cube\Models\Course;
 use Eduka\Cube\Models\Domain;
+use Illuminate\Support\Facades\Schema;
 
 class Nereus
 {
@@ -105,6 +106,13 @@ class Nereus
         $computedDomain = ($segments['subdomain'] ? $segments['subdomain'].'.' : '').
                           $segments['domain'].'.'.
                           $segments['top_level_domain'];
+
+        /**
+         * We need to verify if the domains table exist for edge cases.
+         */
+        if (! Schema::hasTable('domains')) {
+            return null;
+        }
 
         return Domain::firstWhere(
             'name',
