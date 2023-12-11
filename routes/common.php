@@ -8,7 +8,7 @@ Route::get('/mailable/subscribed', function () {
     return new SubscribedToCourse(Subscriber::firstWhere('id', 1));
 });
 
-Route::get('/dev/resources/{resource}/{id?}', function (string $resource, string $id = null) {
+Route::get('/dev/resources/{resource}/{id?}', function (string $resource, ?string $id = null) {
 
     abort_unless(config('app.env') === 'local', 404);
 
