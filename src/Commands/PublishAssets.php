@@ -17,8 +17,8 @@ class PublishAssets extends Command
         $vendors = Config::get('eduka.system.assets-transfer-vendors', []);
 
         foreach ($vendors as $vendor) {
-            $src = base_path("vendor/brunocfalcao/{$vendor}/resources/assets");
-            $dst = resource_path("vendor/{$vendor}/assets");
+            $src = base_path("vendor/brunocfalcao/{$vendor}/resources/");
+            $dst = resource_path("vendor/{$vendor}/");
 
             if (File::exists($src)) {
                 $this->copyFiles($src, $dst);
