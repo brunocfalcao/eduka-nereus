@@ -17,8 +17,8 @@ class PublishAssets extends Command
         $vendors = Config::get('eduka.system.assets-transfer-vendors', []);
 
         foreach ($vendors as $vendor) {
-            $src = base_path("vendor/brunocfalcao/{$vendor}/resources/");
-            $dst = resource_path("vendor/{$vendor}/");
+            $src = base_path("vendor/brunocfalcao/{$vendor}/resources/assets");
+            $dst = resource_path("vendor/{$vendor}/assets");
 
             if (File::exists($src)) {
                 $this->copyFiles($src, $dst);
@@ -33,7 +33,7 @@ class PublishAssets extends Command
     private function copyFiles($src, $dst)
     {
         // Ensure the destination directory exists
-        if (! File::exists($dst)) {
+        if (!File::exists($dst)) {
             File::makeDirectory($dst, 0755, true);
         }
 
