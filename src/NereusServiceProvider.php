@@ -70,8 +70,6 @@ class NereusServiceProvider extends EdukaServiceProvider
                  */
                 $this->loadFrontendRoutes();
 
-                $this->loadViteManifest($this->course->canonical);
-
                 /**
                  * We will then register the course provider. No need to verify
                  * if this course service provider is already registered via the
@@ -102,11 +100,6 @@ class NereusServiceProvider extends EdukaServiceProvider
         });
 
         $this->registerAdditionalProviders();
-    }
-
-    protected function loadViteManifest(string $canonical)
-    {
-        Vite::macro('image', fn (string $asset) => $this->asset("{$asset}", $canonical));
     }
 
     protected function loadViewNamespaces()
