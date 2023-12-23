@@ -33,7 +33,7 @@ class PublishAssets extends Command
     private function copyFiles($src, $dst)
     {
         // Ensure the destination directory exists
-        if (!File::exists($dst)) {
+        if (! File::exists($dst)) {
             File::makeDirectory($dst, 0755, true);
         }
 

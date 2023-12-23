@@ -11,7 +11,6 @@ use Eduka\Nereus\Facades\Nereus as NereusFacade;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Vite;
 
 class NereusServiceProvider extends EdukaServiceProvider
 {
