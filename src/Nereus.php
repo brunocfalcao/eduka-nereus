@@ -20,7 +20,7 @@ class Nereus
          */
     }
 
-    public function trans(string $key, array $params = [], string $canonical = null)
+    public function trans(string $key, array $params = [], ?string $canonical = null)
     {
         $canonical ??= self::course()->canonical;
         $locale = app()->getlocale();
@@ -29,7 +29,7 @@ class Nereus
             return __("{$canonical}.{$key}", $params);
         }
 
-        return ("{$canonical}.{$key}");
+        return "{$canonical}.{$key}";
     }
 
     /**
@@ -52,9 +52,9 @@ class Nereus
              })
              ->persist(function () {
                  $course = $this->matchCourse();
-                if ($course) {
-                    return $course->id;
-                }
+                 if ($course) {
+                     return $course->id;
+                 }
              });
 
         $courseId = $this->obtain();
