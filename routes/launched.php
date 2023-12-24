@@ -13,7 +13,7 @@ Route::get('purchase', [PaymentController::class, 'redirectToCheckoutPage'])
     ->middleware('throttle:payment')
     ->name('purchase.checkout');
 
-Route::get('/redirect-callback/{nonce}', [PaymentRedirectController::class, 'thanksForBuying'])
+Route::get('/thanks-for-buying', [PaymentRedirectController::class, 'thanksForBuying'])
     ->withMiddlewareWhen(function (Request $request) {
         return app()->environment() != 'local';
     }, 'throttle:payment')
