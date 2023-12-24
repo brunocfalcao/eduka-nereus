@@ -6,10 +6,7 @@ use Eduka\Abstracts\Classes\EdukaServiceProvider;
 use Eduka\Cube\Models\Course;
 use Eduka\Nereus\Commands\Fresh;
 use Eduka\Nereus\Commands\Migrate;
-use Eduka\Nereus\Commands\PublishAssets;
 use Eduka\Nereus\Facades\Nereus as NereusFacade;
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 
 class NereusServiceProvider extends EdukaServiceProvider
@@ -86,10 +83,6 @@ class NereusServiceProvider extends EdukaServiceProvider
         }
 
         parent::boot();
-
-        RateLimiter::for('payment', function () {
-            return Limit::perMinute(5); // @todo take from config
-        });
     }
 
     public function register()
@@ -110,7 +103,6 @@ class NereusServiceProvider extends EdukaServiceProvider
     {
         $this->commands([
             Migrate::class,
-            PublishAssets::class,
             Fresh::class,
         ]);
     }
