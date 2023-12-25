@@ -112,7 +112,7 @@ class Nereus
     /**
      * Tries to match an eduka course by the domain used by the visitor.
      *
-     * @return \Eduka\Cube\Models\Course
+     * @return Course
      */
     public function matchCourse()
     {
