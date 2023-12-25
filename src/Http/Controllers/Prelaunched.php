@@ -8,10 +8,6 @@ use Eduka\Nereus\Facades\Nereus;
 
 class Prelaunched extends Controller
 {
-    public const SUBSCRIPTION_COMPLETED = 'subscription-completed';
-
-    public const SUBSCRIPTION_REPEATED = 'subscription-repeated';
-
     public function __construct()
     {
         if (app()->environment() != 'local') {
@@ -51,8 +47,8 @@ class Prelaunched extends Controller
         return back()->with(
             'message',
             isset($subscriber) ?
-                __('nereus.'.self::SUBSCRIPTION_COMPLETED, ['course' => $course->name]) :
-                __('nereus.'.self::SUBSCRIPTION_REPEATED)
+                Nereus::trans('subscription-completed', ['course' => $course->name], 'nereus') :
+                Nereus::trans('subscription-repeated', [], 'nereus')
         );
     }
 }
