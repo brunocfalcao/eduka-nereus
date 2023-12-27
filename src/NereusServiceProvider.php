@@ -6,6 +6,7 @@ use Eduka\Abstracts\Classes\EdukaServiceProvider;
 use Eduka\Cube\Models\Course;
 use Eduka\Nereus\Commands\Fresh;
 use Eduka\Nereus\Commands\Migrate;
+use Eduka\Nereus\Commands\Update;
 use Eduka\Nereus\Facades\Nereus as NereusFacade;
 use Illuminate\Support\Facades\Route;
 
@@ -102,6 +103,7 @@ class NereusServiceProvider extends EdukaServiceProvider
     protected function loadCommands()
     {
         $this->commands([
+            Update::class,
             Migrate::class,
             Fresh::class,
         ]);
