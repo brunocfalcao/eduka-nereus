@@ -3,10 +3,7 @@
 namespace Eduka\Nereus\Commands;
 
 use Eduka\Abstracts\Classes\EdukaCommand;
-use Eduka\Cube\Models\Course;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Process;
-use Symfony\Component\Console\Output\BufferedOutput;
 
 class Update extends EdukaCommand
 {
@@ -32,11 +29,11 @@ class Update extends EdukaCommand
             'composer update',
             'php artisan eduka:fresh',
             'php artisan optimize:clear',
-            'php artisan queue:restart'
+            'php artisan queue:restart',
         ];
 
         foreach ($commands as $command) {
-            $this->paragraph('Running "' . $command . '"');
+            $this->paragraph('Running "'.$command.'"');
             $result = Process::run($command);
             $this->info($result->output());
             $this->paragraph('--- Done ---');
