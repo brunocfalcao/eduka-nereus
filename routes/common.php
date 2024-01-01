@@ -1,6 +1,11 @@
 <?php
 
 use Eduka\Cube\Models\Subscriber;
+use Eduka\Nereus\Http\Controllers\Auth\ForgotPasswordController;
+use Eduka\Nereus\Http\Controllers\Auth\LoginController;
+use Eduka\Nereus\Http\Controllers\Auth\RegisterController;
+use Eduka\Nereus\Http\Controllers\Auth\ResetPasswordController;
+use Eduka\Nereus\Http\Controllers\HomeController;
 use Eduka\Services\Mail\Subscribers\SubscribedToCourse;
 use Illuminate\Support\Facades\Route;
 
@@ -8,31 +13,16 @@ Route::get('/mailable/subscribed', function () {
     return new SubscribedToCourse(Subscriber::firstWhere('id', 1));
 });
 
-Route::get('/dev/resources/{resource}/{id?}', function (string $resource, ?string $id = null) {
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-    abort_unless(config('app.env') === 'local', 404);
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
 
-    $model = match ($resource) {
-        'user', 'users' => User::query(),
-        'chapter', 'chapters' => Chapter::query(),
-        'course', 'courses' => Course::query(),
-        'order', 'orders' => Order::query(),
-        'series', 'series' => Series::query(),
-        'video', 'videos' => Video::query(),
-        'coupon', 'coupons' => Coupon::query(),
+Route::get('/password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('/password/reset', [ResetPasswordController::class, 'reset']);
 
-        default => null,
-    };
-
-    if (! $model) {
-        return [
-            'no resource',
-        ];
-    }
-
-    if ($id) {
-        $model = $model->where('id', $id);
-    }
-
-    return $model->orderBy('id')->get();
-});
+Route::get('/home', [HomeController::class, 'index'])->name('home');
