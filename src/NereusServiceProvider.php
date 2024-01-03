@@ -40,7 +40,7 @@ class NereusServiceProvider extends EdukaServiceProvider
         $domainMatched = false;
 
         // Verify if we are in the backend url (config eduka.backend.url).
-        if (NereusFacade::matchBackend() && ! $domainMatched) {
+        if (NereusFacade::matchBackend()) {
             $this->loadBackendRoutes();
 
             // It's always the brunocfalcao/eduka-dev package.

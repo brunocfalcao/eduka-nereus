@@ -3,6 +3,9 @@
 namespace Eduka\Nereus\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 
 class HomeController extends Controller
 {
@@ -17,13 +20,10 @@ class HomeController extends Controller
     }
 
     /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return Application|Factory|View|\Illuminate\Foundation\Application
      */
-    public function index()
+    public function index(): \Illuminate\Foundation\Application|View|Factory|Application
     {
-        dd('welcome to your home');
-        return view('home');
+        return view('backend::home');
     }
 }
