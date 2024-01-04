@@ -1,6 +1,5 @@
 <?php
 
-
 use Eduka\Nereus\Http\Controllers\Auth\ForgotPasswordController;
 use Eduka\Nereus\Http\Controllers\Auth\LoginController;
 use Eduka\Nereus\Http\Controllers\Auth\RegisterController;

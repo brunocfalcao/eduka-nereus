@@ -3,8 +3,8 @@
 namespace Eduka\Nereus\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Eduka\Cube\Models\User;
 use App\Providers\RouteServiceProvider;
+use Eduka\Cube\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;

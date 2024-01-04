@@ -19,9 +19,6 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
-    /**
-     * @return Application|Factory|View|\Illuminate\Foundation\Application
-     */
     public function index(): \Illuminate\Foundation\Application|View|Factory|Application
     {
         return view('backend::home');
