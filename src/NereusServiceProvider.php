@@ -144,12 +144,14 @@ class NereusServiceProvider extends EdukaServiceProvider
 
     protected function loadFrontendRoutes()
     {
-        if ($this->course->isPrelaunched()) {
-            $routesPath = __DIR__.'/../routes/prelaunched.php';
-        }
+        switch ($this->course->state()) {
+            case 'prelaunched':
+                $routesPath = __DIR__.'/../routes/prelaunched.php';
+                break;
 
-        if ($this->course->isLaunched()) {
-            $routesPath = __DIR__.'/../routes/launched.php';
+            case 'launched':
+                $routesPath = __DIR__.'/../routes/launched.php';
+                break;
         }
 
         Route::middleware([
