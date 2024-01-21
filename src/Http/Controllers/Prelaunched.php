@@ -18,7 +18,7 @@ class Prelaunched extends Controller
     public function welcome()
     {
         return view('course::prelaunched')
-               ->with(['course' => Nereus::course()]);
+            ->with(['course' => Nereus::course()]);
     }
 
     public function subscribe()
@@ -31,8 +31,8 @@ class Prelaunched extends Controller
 
         // Check if the subscriber + course already exists on the database.
         if (! Subscriber::where('email', request()->email)
-                        ->where('course_id', $course->id)
-                        ->exists()) {
+            ->where('course_id', $course->id)
+            ->exists()) {
             $subscriber = Subscriber::create([
                 'course_id' => $course->id,
                 'email' => request()->email,

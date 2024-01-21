@@ -116,9 +116,9 @@ class NereusServiceProvider extends EdukaServiceProvider
         Route::middleware([
             'web',
         ])
-        ->group(function () use ($routesPath) {
-            include $routesPath;
-        });
+            ->group(function () use ($routesPath) {
+                include $routesPath;
+            });
     }
 
     protected function loadBackendRoutes()
@@ -129,17 +129,17 @@ class NereusServiceProvider extends EdukaServiceProvider
         Route::middleware([
             'web',
         ])
-        ->group(function () use ($routesPath) {
-            include $routesPath;
-        });
+            ->group(function () use ($routesPath) {
+                include $routesPath;
+            });
 
         // Load the payments webhook without on the api middleware.
         Route::middleware([
             'api',
         ])
-        ->group(function () use ($apiRoutesPath) {
-            include $apiRoutesPath;
-        });
+            ->group(function () use ($apiRoutesPath) {
+                include $apiRoutesPath;
+            });
     }
 
     protected function loadFrontendRoutes()
@@ -157,9 +157,9 @@ class NereusServiceProvider extends EdukaServiceProvider
         Route::middleware([
             'web',
         ])
-        ->group(function () use ($routesPath) {
-            include $routesPath;
-        });
+            ->group(function () use ($routesPath) {
+                include $routesPath;
+            });
     }
 
     protected function registerAdditionalProviders()

@@ -40,21 +40,21 @@ class Nereus
     public function course()
     {
         $this->withPrefix('eduka:nereus:course')
-             ->invalidateIf(function () {
-                 /**
+            ->invalidateIf(function () {
+                /**
                   * Invalidation can occur in the following scenarios:
                   * EDUKA_ALWAYS_INVALIDATE_COURSES=true or
                   * Visitor getHost() != Current course session domain.
                   */
-                 return $this->matchCourse() == null ||
-                        config('eduka.always_invalidate_courses') === true;
-             })
-             ->persist(function () {
-                 $course = $this->matchCourse();
-                 if ($course) {
-                     return $course->id;
-                 }
-             });
+                return $this->matchCourse() == null ||
+                       config('eduka.always_invalidate_courses') === true;
+            })
+            ->persist(function () {
+                $course = $this->matchCourse();
+                if ($course) {
+                    return $course->id;
+                }
+            });
 
         $courseId = $this->obtain();
 
@@ -122,9 +122,9 @@ class Nereus
     protected function domain()
     {
         return $this->withPrefix('eduka:nereus:domain')
-                    ->persist(function () {
-                        return request()->getHost();
-                    })
-                    ->obtain();
+            ->persist(function () {
+                return request()->getHost();
+            })
+            ->obtain();
     }
 }
