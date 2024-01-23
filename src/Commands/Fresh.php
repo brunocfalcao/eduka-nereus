@@ -5,6 +5,7 @@ namespace Eduka\Nereus\Commands;
 use Eduka\Abstracts\Classes\EdukaCommand;
 use Eduka\Cube\Models\Course;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Process;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -29,6 +30,10 @@ class Fresh extends EdukaCommand
         ');
 
         $courses = config('eduka.courses');
+
+        // Deleting all file contents under the storage/app/public.
+        $this->info('Deleting files under storage/app/public...');
+        File::cleanDirectory(storage_path('app/public'));
 
         // Run php artisan migrate:fresh.
         $this->info('Running PHP artisan migrate:fresh for eduka database...');
