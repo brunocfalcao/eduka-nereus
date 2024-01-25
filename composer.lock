@@ -481,7 +481,7 @@
                 "brunocfalcao/course-mastering-nova": "dev-master",
                 "brunocfalcao/eduka-nereus": "dev-master",
                 "illuminate/support": "^10.0",
-                "php": "^8.1"
+                "php": "^8.2"
             },
             "default-branch": true,
             "type": "library",
@@ -812,7 +812,7 @@
             },
             "require": {
                 "illuminate/contracts": "^10.0",
-                "php": "^8.1",
+                "php": "^8.2",
                 "symfony/dom-crawler": "^6.3"
             },
             "default-branch": true,
@@ -1273,7 +1273,7 @@
                 "shasum": ""
             },
             "require": {
-                "php": "^8.1"
+                "php": "^8.2"
             },
             "conflict": {
                 "doctrine/common": "<2.9"
@@ -1455,7 +1455,7 @@
                 "shasum": ""
             },
             "require": {
-                "php": "^8.1"
+                "php": "^8.2"
             },
             "require-dev": {
                 "doctrine/coding-standard": "^10",
@@ -2462,7 +2462,7 @@
                 "monolog/monolog": "^3.0",
                 "nesbot/carbon": "^2.67",
                 "nunomaduro/termwind": "^1.13",
-                "php": "^8.1",
+                "php": "^8.2",
                 "psr/container": "^1.1.1|^2.0.1",
                 "psr/log": "^1.0|^2.0|^3.0",
                 "psr/simple-cache": "^1.0|^2.0|^3.0",
@@ -2538,7 +2538,7 @@
                 "league/flysystem-sftp-v3": "^3.0",
                 "mockery/mockery": "^1.5.1",
                 "nyholm/psr7": "^1.2",
-                "orchestra/testbench-core": "^8.12",
+                "orchestra/testbench-core": "^8.22",
                 "pda/pheanstalk": "^4.0",
                 "phpstan/phpstan": "^1.4.7",
                 "phpunit/phpunit": "^10.0.7",
@@ -2645,7 +2645,7 @@
             "require": {
                 "ext-mbstring": "*",
                 "illuminate/collections": "^10.0|^11.0",
-                "php": "^8.1",
+                "php": "^8.2",
                 "symfony/console": "^6.2|^7.0"
             },
             "conflict": {
@@ -4645,7 +4645,7 @@
                 "shasum": ""
             },
             "require": {
-                "php": "^8.1"
+                "php": "^8.2"
             },
             "require-dev": {
                 "captainhook/plugin-composer": "^5.3",
