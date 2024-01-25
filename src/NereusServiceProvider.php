@@ -12,8 +12,6 @@ use Illuminate\Support\Facades\Route;
 
 class NereusServiceProvider extends EdukaServiceProvider
 {
-    public const COURSE_SESSION_KEY = 'course';
-
     public ?Course $course;
 
     public function boot()
@@ -30,8 +28,7 @@ class NereusServiceProvider extends EdukaServiceProvider
          * In case we are running in console, sometimes we might want to
          * skip the course contextualization (like to run migrations).
          */
-        if (config('eduka.skip_course_detection') === true &&
-            config('eduka.skip_course_detection')) {
+        if (config('eduka.skip_course_detection') === true) {
             parent::boot();
 
             return;
@@ -68,6 +65,12 @@ class NereusServiceProvider extends EdukaServiceProvider
                 $this->loadFrontendRoutes();
 
                 /**
+                 * Bootstrap Eduka UI provider (only in the case of a
+                 * course, or a backend that is identified).
+                 */
+                $this->registerUIProvider();
+
+                /**
                  * We will then register the course provider. No need to verify
                  * if this course service provider is already registered via the
                  * load_providers config key, since laravel already does that.
@@ -93,6 +96,11 @@ class NereusServiceProvider extends EdukaServiceProvider
         });
 
         $this->registerAdditionalProviders();
+    }
+
+    protected function registerUIProvider()
+    {
+        app()->register(\Eduka\UI\UIServiceProvider::class);
     }
 
     protected function loadViewNamespaces()

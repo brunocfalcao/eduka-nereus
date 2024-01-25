@@ -6,6 +6,7 @@ use Brunocfalcao\Cerebrus\ConcernsSessionPersistence;
 use Brunocfalcao\LaravelHelpers\Utils\DomainPatternIdentifier;
 use Eduka\Cube\Models\Course;
 use Eduka\Cube\Models\Domain;
+use Illuminate\Support\Facades\Schema;
 
 class Nereus
 {
@@ -42,10 +43,10 @@ class Nereus
         $this->withPrefix('eduka:nereus:course')
             ->invalidateIf(function () {
                 /**
-                  * Invalidation can occur in the following scenarios:
-                  * EDUKA_ALWAYS_INVALIDATE_COURSES=true or
-                  * Visitor getHost() != Current course session domain.
-                  */
+                 * Invalidation can occur in the following scenarios:
+                 * EDUKA_ALWAYS_INVALIDATE_COURSES=true or
+                 * Visitor getHost() != Current course session domain.
+                 */
                 return $this->matchCourse() == null ||
                        config('eduka.always_invalidate_courses') === true;
             })
@@ -108,6 +109,11 @@ class Nereus
      */
     public function matchCourse()
     {
+        // Verify if the table courses exist.
+        if (! Schema::hasTable('courses')) {
+            return null;
+        }
+
         // Verify if the current url can be a possible domain course.
         return $this->matchDomain();
     }
