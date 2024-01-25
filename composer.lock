@@ -160,7 +160,7 @@
                 "shasum": ""
             },
             "require": {
-                "php": "^8.0"
+                "php": "^8.2"
             },
             "require-dev": {
                 "php-coveralls/php-coveralls": "^2.2",
@@ -215,7 +215,7 @@
                 "shasum": ""
             },
             "require": {
-                "php": "^8.0"
+                "php": "^8.2"
             },
             "default-branch": true,
             "type": "library",
@@ -268,7 +268,7 @@
                 "brunocfalcao/eduka-nereus": "dev-master",
                 "brunocfalcao/eduka-payments": "dev-master",
                 "owenvoke/blade-fontawesome": "^2.1",
-                "php": "^8.0"
+                "php": "^8.2"
             },
             "default-branch": true,
             "type": "library",
@@ -317,7 +317,7 @@
             },
             "require": {
                 "illuminate/contracts": "^10.0",
-                "php": "^8.0"
+                "php": "^8.2"
             },
             "default-branch": true,
             "type": "library",
@@ -368,7 +368,7 @@
                 "illuminate/contracts": "^10.0",
                 "jaybizzle/crawler-detect": "^1.2",
                 "jenssegers/agent": "^2.6",
-                "php": "^8.0"
+                "php": "^8.2"
             },
             "default-branch": true,
             "type": "library",
@@ -425,7 +425,7 @@
                 "brunocfalcao/eduka-helpers": "dev-master",
                 "illuminate/contracts": "^10.0",
                 "lemonsqueezy/laravel": "^0.2.1",
-                "php": "^8.0"
+                "php": "^8.2"
             },
             "default-branch": true,
             "type": "library",
@@ -531,7 +531,7 @@
             },
             "require": {
                 "illuminate/contracts": "^10.0",
-                "php": "^8.0"
+                "php": "^8.2"
             },
             "default-branch": true,
             "type": "library",
@@ -583,7 +583,7 @@
                 "brunocfalcao/eduka-abstracts": "dev-master",
                 "doctrine/dbal": "^3.5",
                 "illuminate/contracts": "^10.0",
-                "php": "^8.0"
+                "php": "^8.2"
             },
             "default-branch": true,
             "type": "library",
@@ -643,7 +643,7 @@
                 "guzzlehttp/guzzle": "^7.0",
                 "illuminate/contracts": "^10.0",
                 "lemonsqueezy/laravel": "^0.2.1",
-                "php": "^8.0"
+                "php": "^8.2"
             },
             "default-branch": true,
             "type": "library",
@@ -699,7 +699,7 @@
                 "brunocfalcao/eduka-abstracts": "dev-master",
                 "brunocfalcao/eduka-cube": "dev-master",
                 "illuminate/contracts": "^10.0",
-                "php": "^8.0",
+                "php": "^8.2",
                 "symfony/http-client": "^6.1",
                 "symfony/postmark-mailer": "^6.1"
             },
@@ -755,7 +755,7 @@
             },
             "require": {
                 "illuminate/contracts": "^10.0",
-                "php": "^8.0"
+                "php": "^8.2"
             },
             "default-branch": true,
             "type": "library",
@@ -3917,7 +3917,7 @@
             },
             "require": {
                 "ext-mbstring": "*",
-                "php": "^8.0",
+                "php": "^8.2",
                 "symfony/console": "^5.3.0|^6.0.0"
             },
             "require-dev": {
@@ -4004,7 +4004,7 @@
             "require": {
                 "blade-ui-kit/blade-icons": "^1.5",
                 "illuminate/support": "^9.0|^10.0",
-                "php": "^8.0",
+                "php": "^8.2",
                 "thecodingmachine/safe": "^2.4"
             },
             "require-dev": {
@@ -4736,7 +4736,7 @@
             "require": {
                 "brick/math": "^0.8.8 || ^0.9 || ^0.10 || ^0.11",
                 "ext-json": "*",
-                "php": "^8.0",
+                "php": "^8.2",
                 "ramsey/collection": "^1.2 || ^2.0"
             },
             "replace": {
@@ -7384,7 +7384,7 @@
                 "shasum": ""
             },
             "require": {
-                "php": "^8.0"
+                "php": "^8.2"
             },
             "require-dev": {
                 "phpstan/phpstan": "^1.5",
@@ -7795,7 +7795,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.0"
+        "php": "^8.2"
     },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"
