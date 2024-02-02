@@ -1,12 +1,12 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use Eduka\Nereus\Middleware\WithCourse;
-use Eduka\Nereus\Http\Controllers\Launched;
 use Brunocfalcao\Tokenizer\Middleware\WithToken;
+use Eduka\Nereus\Http\Controllers\Launched;
+use Eduka\Nereus\Middleware\WithCourse;
 use Eduka\Payments\Http\Controllers\CheckoutController;
 use Eduka\Payments\Http\Controllers\RedirectController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', [Launched::class, 'welcome'])
     ->middleware('guest')

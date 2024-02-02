@@ -3,8 +3,8 @@
 namespace Eduka\Nereus\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
 use Eduka\Nereus\Facades\Nereus;
+use Illuminate\Http\Request;
 
 class WithCourse
 {
