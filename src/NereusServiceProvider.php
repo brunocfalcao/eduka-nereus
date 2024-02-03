@@ -41,7 +41,7 @@ class NereusServiceProvider extends EdukaServiceProvider
             $this->loadBackendRoutes();
 
             // It's always the brunocfalcao/eduka-dev package.
-            app()->register(\Eduka\Dev\DevServiceProvider::class);
+            app()->register(config('eduka.backend.service_provider'));
 
             $domainMatched = true;
         }
@@ -142,6 +142,7 @@ class NereusServiceProvider extends EdukaServiceProvider
             });
 
         // Load the payments webhook without on the api middleware.
+
         Route::middleware([
             'api',
         ])
