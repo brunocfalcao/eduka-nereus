@@ -6,84 +6,85 @@ use Eduka\Abstracts\Classes\EdukaServiceProvider;
 use Eduka\Cube\Models\Course;
 use Eduka\Nereus\Commands\Fresh;
 use Eduka\Nereus\Commands\Migrate;
-use Eduka\Nereus\Commands\Update;
 use Eduka\Nereus\Facades\Nereus as NereusFacade;
 use Illuminate\Support\Facades\Route;
 
 class NereusServiceProvider extends EdukaServiceProvider
 {
-    public ?Course $course;
+    public $course;
+
+    public $organization;
 
     public function boot()
     {
         // configuration attributes setting for the parent class to work.
         $this->dir = __DIR__;
 
-        // Default "eduka-system" view namespace. Normally to showcase eduka.
-        $this->loadViewNamespaces();
-
         $this->loadCommands();
 
         /**
-         * In case we are running in console, sometimes we might want to
-         * skip the course contextualization (like to run migrations).
+         * Load forced providers that are configured via the
+         * eduka.load_providers. They will always load no matter what
+         * happens next.
          */
-        if (config('eduka.skip_course_detection') === true) {
+        foreach (config('eduka.load_providers') as $provider) {
+            app()->register($provider);
+        }
+
+        /**
+         * If we are in a console context, we don't need to try
+         * to match an organization or a course.
+         */
+        if (app()->runningInConsole()) {
             parent::boot();
 
             return;
         }
 
-        $domainMatched = false;
+        // Backend?
+        if (NereusFacade::organization()) {
+            $this->organization = NereusFacade::organization();
 
-        // Verify if we are in the backend url (config eduka.backend.url).
-        if (NereusFacade::matchBackend()) {
+            /**
+             * Load the organization backend routes. Nova, etc.
+             */
             $this->loadBackendRoutes();
 
-            // It's always the brunocfalcao/eduka-dev package.
-            app()->register(config('eduka.backend.service_provider'));
+            /**
+             * This allows us to have multiple backends for different
+             * organizations. This way we can just unify everything in
+             * a single domain and then just have courses, and backends as
+             * domain aliases.
+             */
+            app()->register($this->organization->provider_namespace);
 
-            $domainMatched = true;
-        }
-
-        /**
-         * Nereus allows 2 site contexts:
-         * - In frontend, the visitor is on an identified course domain.
-         * - In backend, the visitor is on the her backend (to see videos).
-         */
-        if (! $domainMatched) {
+            // Frontend?
+        } elseif (NereusFacade::course()) {
             $this->course = NereusFacade::course();
 
-            if ($this->course) {
-                // Load common routes already.
-                $this->loadCommonRoutes();
+            // Load common routes already.
+            $this->loadCommonRoutes();
 
-                /**
-                 * Load the routes, analytics middleware, course service
-                 * provider, etc.
-                 */
-                $this->loadFrontendRoutes();
+            /**
+             * Load the routes, analytics middleware, course service
+             * provider, etc.
+             */
+            $this->loadFrontendRoutes();
 
-                /**
-                 * Bootstrap Eduka UI provider (only in the case of a
-                 * course, or a backend that is identified).
-                 */
-                $this->registerUIProvider();
+            /**
+             * Bootstrap Eduka UI provider (only in the case of a
+             * course, or a backend that is identified).
+             */
+            $this->registerUIProvider();
 
-                /**
-                 * We will then register the course provider. No need to verify
-                 * if this course service provider is already registered via the
-                 * load_providers config key, since laravel already does that.
-                 */
-                $this->course->registerSelfProvider();
-
-                $domainMatched = true;
-            }
-        }
-
-        // Throw the HTTP 501 error. Limbo error.
-        if (! $domainMatched && ! app()->runningInConsole()) {
-            abort(501, 'No domain found to load a specific course or the admin backoffice');
+            /**
+             * We will then register the course provider. No need to verify
+             * if this course service provider is already registered via the
+             * load_providers config key, since laravel already does that.
+             */
+            $this->course->registerSelfProvider();
+        } else {
+            abort(501, 'Domain not part of the eduka organizations or courses');
         }
 
         parent::boot();
@@ -103,15 +104,9 @@ class NereusServiceProvider extends EdukaServiceProvider
         app()->register(\Eduka\UI\UIServiceProvider::class);
     }
 
-    protected function loadViewNamespaces()
-    {
-        $this->customViewNamespace(__DIR__.'/../resources/views', 'eduka-system');
-    }
-
     protected function loadCommands()
     {
         $this->commands([
-            Update::class,
             Migrate::class,
             Fresh::class,
         ]);

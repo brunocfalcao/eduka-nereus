@@ -6,6 +6,7 @@ use Brunocfalcao\Cerebrus\ConcernsSessionPersistence;
 use Brunocfalcao\LaravelHelpers\Utils\DomainPatternIdentifier;
 use Eduka\Cube\Models\Course;
 use Eduka\Cube\Models\Domain;
+use Eduka\Cube\Models\Organization;
 use Illuminate\Support\Facades\Schema;
 
 class Nereus
@@ -65,16 +66,40 @@ class Nereus
     }
 
     /**
-     * Tries to match the backend url with the visited url. This is the
-     * complementary to the matchCourse, meaning, if we are not in a course
-     * landing page, then we need to be in a backend context.
+     * Returns the respective matched organization, if any.
      *
+     * @return Eduka\Cube\Models\Organization
+     */
+    public function organization()
+    {
+        $this->withPrefix('eduka:nereus:organization')
+            ->invalidateIf(function () {
+                return app()->runningInConsole();
+            })
+            ->persist(function () {
+                $organization = $this->matchOrganization();
+                if ($organization) {
+                    return $organization->id;
+                }
+            });
+
+        $organizationId = $this->obtain();
+
+        if ($organizationId) {
+            return Organization::firstWhere('id', $organizationId);
+        }
+    }
+
+    /**
+     * Tries to match one of the possible organization backend domains.
+     * We iterate through the organization domains until we match one of
+     * those.
      *
      * @return bool
      */
     public function matchBackend()
     {
-        return $this->domain() == config('eduka.backend.url');
+        return Organization::where('domain', $this->domain())->exists();
     }
 
     /**
@@ -88,7 +113,7 @@ class Nereus
      *
      * @return string|null The matched domain.
      */
-    public function matchDomain()
+    public function matchCourseDomain()
     {
         $segments = DomainPatternIdentifier::parseUrl();
 
@@ -100,6 +125,42 @@ class Nereus
             'domain',
             $computedDomain
         );
+    }
+
+    /**
+     * Verify if the current request domain matches a possible domain
+     * in the organizations scopes. The match is done in the "name", meaning:.
+     *
+     * request domain      course domain    result
+     * staging.roche.com   roche.com        true
+     * roche.com           roche.com        true
+     * roche.sky.com       roche.com        false
+     *
+     * @return string|null The matched domain.
+     */
+    public function matchOrganizationDomain()
+    {
+        $segments = DomainPatternIdentifier::parseUrl();
+
+        $computedDomain = ($segments['subdomain'] ? $segments['subdomain'].'.' : '').
+                          $segments['domain'].'.'.
+                          $segments['top_level_domain'];
+
+        return Organization::firstWhere(
+            'domain',
+            $computedDomain
+        );
+    }
+
+    public function matchOrganization()
+    {
+        // Verify if the table courses exist.
+        if (! Schema::hasTable('organizations')) {
+            return null;
+        }
+
+        // Verify if the current url can be a possible domain course.
+        return $this->matchOrganizationDomain();
     }
 
     /**
@@ -115,7 +176,7 @@ class Nereus
         }
 
         // Verify if the current url can be a possible domain course.
-        return $this->matchDomain();
+        return $this->matchCourseDomain();
     }
 
     /**
