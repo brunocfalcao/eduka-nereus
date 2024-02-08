@@ -33,6 +33,14 @@ class NereusServiceProvider extends EdukaServiceProvider
         }
 
         /**
+         * The common routes are routes that need to be loaded no matter
+         * where we are. E.g.: jobs that would need to have routes
+         * specified, then those routes need to be created here.
+         *
+         */
+        $this->loadCommonRoutes();
+
+        /**
          * If we are in a console context, we don't need to try
          * to match an organization or a course.
          */
@@ -41,13 +49,6 @@ class NereusServiceProvider extends EdukaServiceProvider
 
             return;
         }
-
-        /**
-         * The common routes are routes that need to be loaded no matter
-         * where we are. E.g.: jobs that would need to have routes
-         * specified, then those routes need to be created here.
-         */
-        $this->loadCommonRoutes();
 
         // Backend?
         if (NereusFacade::organization()) {
