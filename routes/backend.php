@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Eduka\Nereus\Http\Controllers\Auth\ResetPasswordController;
 
 /*
 Route::get(
