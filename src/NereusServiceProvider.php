@@ -2,13 +2,13 @@
 
 namespace Eduka\Nereus;
 
+use Eduka\Abstracts\Classes\EdukaServiceProvider;
 use Eduka\Cube\Models\Course;
 use Eduka\Nereus\Commands\Fresh;
 use Eduka\Nereus\Commands\Migrate;
-use Illuminate\Support\Facades\Route;
-use Eduka\Nereus\Middleware\RequestLog;
 use Eduka\Nereus\Facades\Nereus as NereusFacade;
-use Eduka\Abstracts\Classes\EdukaServiceProvider;
+use Eduka\Nereus\Middleware\RequestLog;
+use Illuminate\Support\Facades\Route;
 
 class NereusServiceProvider extends EdukaServiceProvider
 {
@@ -118,7 +118,7 @@ class NereusServiceProvider extends EdukaServiceProvider
         $routesPath = __DIR__.'/../routes/common.php';
 
         Route::middleware([
-            'web', RequestLog::class
+            'web', RequestLog::class,
         ])
             ->group(function () use ($routesPath) {
                 include $routesPath;
@@ -131,7 +131,7 @@ class NereusServiceProvider extends EdukaServiceProvider
         $apiRoutesPath = __DIR__.'/../routes/api.php';
 
         Route::middleware([
-            'web', RequestLog::class
+            'web', RequestLog::class,
         ])
             ->group(function () use ($routesPath) {
                 include $routesPath;
@@ -140,7 +140,7 @@ class NereusServiceProvider extends EdukaServiceProvider
         // Load the payments webhook without on the api middleware.
 
         Route::middleware([
-            'api', RequestLog::class
+            'api', RequestLog::class,
         ])
             ->group(function () use ($apiRoutesPath) {
                 include $apiRoutesPath;
@@ -160,7 +160,7 @@ class NereusServiceProvider extends EdukaServiceProvider
         }
 
         Route::middleware([
-            'web', RequestLog::class
+            'web', RequestLog::class,
         ])
             ->group(function () use ($routesPath) {
                 include $routesPath;
