@@ -134,10 +134,11 @@ class NereusServiceProvider extends EdukaServiceProvider
             'web', RequestLog::class,
         ])
             ->group(function () use ($routesPath) {
+                info('loading backend routes on url ' . request()->fullUrl());
                 include $routesPath;
             });
 
-        // Load the payments webhook without on the api middleware.
+        // Load the payments webhook on the api middleware.
         Route::middleware([
             'api', RequestLog::class,
         ])
