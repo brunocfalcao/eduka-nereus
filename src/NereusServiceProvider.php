@@ -42,6 +42,13 @@ class NereusServiceProvider extends EdukaServiceProvider
             return;
         }
 
+        /**
+         * The common routes are routes that need to be loaded no matter
+         * where we are. E.g.: jobs that would need to have routes
+         * specified, then those routes need to be created here.
+         */
+        $this->loadCommonRoutes();
+
         // Backend?
         if (NereusFacade::organization()) {
             $this->organization = NereusFacade::organization();
@@ -62,9 +69,6 @@ class NereusServiceProvider extends EdukaServiceProvider
             // Frontend?
         } elseif (NereusFacade::course()) {
             $this->course = NereusFacade::course();
-
-            // Load common routes already.
-            $this->loadCommonRoutes();
 
             /**
              * Load the routes, analytics middleware, course service
@@ -134,7 +138,6 @@ class NereusServiceProvider extends EdukaServiceProvider
             'web', RequestLog::class,
         ])
             ->group(function () use ($routesPath) {
-                info('loading backend routes on url ' . request()->fullUrl());
                 include $routesPath;
             });
 

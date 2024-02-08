@@ -15,11 +15,6 @@ Route::post(
 )->name('password.email');
 */
 
-Route::get(
-    'password/reset/{token}?email={email}',
-    [ResetPasswordController::class, 'showResetForm']
-)->name('password.reset');
-
 /*
 Route::post(
     'password/reset',
