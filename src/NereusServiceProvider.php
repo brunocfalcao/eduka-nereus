@@ -138,7 +138,6 @@ class NereusServiceProvider extends EdukaServiceProvider
             });
 
         // Load the payments webhook without on the api middleware.
-
         Route::middleware([
             'api', RequestLog::class,
         ])
