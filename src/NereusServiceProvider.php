@@ -36,9 +36,14 @@ class NereusServiceProvider extends EdukaServiceProvider
          * The common routes are routes that need to be loaded no matter
          * where we are. E.g.: jobs that would need to have routes
          * specified, then those routes need to be created here.
-         *
          */
         $this->loadCommonRoutes();
+
+        /**
+         * In case there is a route file with the same name as the
+         * environment type, then we can load it.
+         */
+        $this->loadEnvironmentBaseRoutes();
 
         /**
          * If we are in a console context, we don't need to try
@@ -116,6 +121,20 @@ class NereusServiceProvider extends EdukaServiceProvider
             Migrate::class,
             Fresh::class,
         ]);
+    }
+
+    protected function loadEnvironmentBaseRoutes()
+    {
+        $envRoute = __DIR__.'/../routes/'.app()->environment().'.php';
+
+        if ($envRoute) {
+            Route::middleware([
+                'web', RequestLog::class,
+            ])
+                ->group(function () use ($envRoute) {
+                    include $envRoute;
+                });
+        }
     }
 
     protected function loadCommonRoutes()
