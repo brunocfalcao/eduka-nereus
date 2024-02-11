@@ -25,7 +25,7 @@ class Prelaunched extends Controller
     {
         request()->validate([
             'email' => 'required|email',
-            'uuid' => 'exists:courses,uuid'
+            'uuid' => 'exists:courses,uuid',
         ]);
 
         $course = Nereus::course();
