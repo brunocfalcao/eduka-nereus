@@ -422,7 +422,6 @@
             },
             "require": {
                 "brunocfalcao/eduka-abstracts": "dev-master",
-                "brunocfalcao/eduka-helpers": "dev-master",
                 "illuminate/contracts": "^10.0",
                 "lemonsqueezy/laravel": "^0.2.1",
                 "php": "^8.2"
