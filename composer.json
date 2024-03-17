@@ -28,7 +28,7 @@
         "brunocfalcao/eduka-abstracts": "dev-master",
         "brunocfalcao/eduka-services": "dev-master",
         "brunocfalcao/eduka-migrations": "dev-master",
-        "laravel/ui" : "v4.3.0"
+        "laravel/ui" : "^4.0"
     },
     "autoload": {
         "psr-4": {

@@ -22,13 +22,13 @@ class RequestLog
             'payload' => Arr::dot($request->all()),
             'headers' => Arr::dot($request->headers->all()),
 
-            'user_id' => Auth::id(),
+            'student_id' => Auth::id(),
 
             'route' => $route?->getName(),
             'parameters' => Arr::dot($route?->parameters()),
             'middleware' => Arr::dot($route?->middleware()),
 
-            'organization_id' => Nereus::organization()?->id,
+            'backend_id' => Nereus::backend()?->id,
             'course_id' => Nereus::course()?->id,
         ]);
 

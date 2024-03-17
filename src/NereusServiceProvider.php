@@ -14,7 +14,7 @@ class NereusServiceProvider extends EdukaServiceProvider
 {
     public $course;
 
-    public $organization;
+    public $backend;
 
     public function boot()
     {
@@ -47,7 +47,7 @@ class NereusServiceProvider extends EdukaServiceProvider
 
         /**
          * If we are in a console context, we don't need to try
-         * to match an organization or a course.
+         * to match an backend or a course.
          */
         if (app()->runningInConsole()) {
             parent::boot();
@@ -55,22 +55,22 @@ class NereusServiceProvider extends EdukaServiceProvider
             return;
         }
 
-        // Backend?
-        if (NereusFacade::organization()) {
-            $this->organization = NereusFacade::organization();
+        // Backend (student's backoffice) ?
+        if (NereusFacade::matchBackend()) {
+            $this->backend = NereusFacade::backend();
 
             /**
-             * Load the organization backend routes. Nova, etc.
+             * Load the backend backend routes. Nova, etc.
              */
             $this->loadBackendRoutes();
 
             /**
              * This allows us to have multiple backends for different
-             * organizations. This way we can just unify everything in
+             * backends. This way we can just unify everything in
              * a single domain and then just have courses, and backends as
              * domain aliases.
              */
-            app()->register($this->organization->provider_namespace);
+            app()->register($this->backend->provider_namespace);
 
             // Frontend?
         } elseif (NereusFacade::course()) {
@@ -94,8 +94,6 @@ class NereusServiceProvider extends EdukaServiceProvider
              * load_providers config key, since laravel already does that.
              */
             $this->course->registerSelfProvider();
-        } else {
-            abort(501, 'Domain not part of the eduka organizations or courses');
         }
 
         parent::boot();
