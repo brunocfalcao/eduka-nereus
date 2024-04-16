@@ -18,6 +18,17 @@ class Nereus
          */
     }
 
+    /**
+     * Returns a translated locale, based on the course/backend context.
+     * As example, for the canonical EN course-mastering-nova, there should be
+     * a lang_path('en/course-mastering-nova.php') file. Then inside it
+     * you should define the respective translations array.
+     *
+     * @param  string  $key  The locale key to return the value
+     * @param  array  $params  key/values to translate using {xxx}
+     * @param  string|null  $canonical  An optional locale name, default=canonical
+     * @return string
+     */
     public function trans(string $key, array $params = [], ?string $canonical = null)
     {
         $canonical ??= self::course()->canonical;
@@ -49,8 +60,9 @@ class Nereus
      */
     public function backend()
     {
-        return $this->matchBackend() ?:
-            Backend::firstWhere('domain', $this->domain());
+        return $this->matchBackend() ?
+            Backend::firstWhere('domain', $this->domain()) :
+            null;
     }
 
     /**

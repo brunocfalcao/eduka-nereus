@@ -46,6 +46,14 @@ class NereusServiceProvider extends EdukaServiceProvider
         $this->loadEnvironmentBaseRoutes();
 
         /**
+         * No matter if we are in whatever context, we always load
+         * our translation locale file. The translations are
+         * used like trans('nereus::nereus.<xxx>') or in case
+         * of a contextualized course, like trans('course::course.<xxx>').
+         */
+        $this->loadLocale();
+
+        /**
          * If we are in a console context, we don't need to try
          * to match an backend or a course.
          */
@@ -119,6 +127,11 @@ class NereusServiceProvider extends EdukaServiceProvider
             Migrate::class,
             Fresh::class,
         ]);
+    }
+
+    protected function loadLocale()
+    {
+        $this->loadTranslationsFrom(__DIR__.'/../lang', 'nereus');
     }
 
     protected function loadEnvironmentBaseRoutes()

@@ -5,6 +5,7 @@ namespace Eduka\Nereus\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Eduka\Cube\Models\Subscriber;
 use Eduka\Nereus\Facades\Nereus;
+use Eduka\Nereus\Rules\SubscriberExists;
 
 class Prelaunched extends Controller
 {
@@ -23,33 +24,22 @@ class Prelaunched extends Controller
 
     public function subscribe()
     {
+        $course = Nereus::course();
+
         request()->validate([
-            'email' => 'required|email',
+            'email' => ['required', 'email:rfc,dns', new SubscriberExists($course->id)],
             'uuid' => 'exists:courses,uuid',
         ]);
 
-        $course = Nereus::course();
+        // Add subscriber to course.
+        $subscriber = Subscriber::create([
+            'course_id' => $course->id,
+            'email' => request()->email,
+        ]);
 
-        // Check if the subscriber + course already exists on the database.
-        if (! Subscriber::where('email', request()->email)
-            ->where('course_id', $course->id)
-            ->exists()) {
-            $subscriber = Subscriber::create([
-                'course_id' => $course->id,
-                'email' => request()->email,
-            ]);
-        }
-
-        /**
-         * If the subscriber email + course already subscribed then just
-         * give a nice message saying it's already subscribed. If not,
-         * then subscribe it with a thank you message.
-         */
-        return back()->with(
+        return view('course::prelaunched')->with(
             'message',
-            isset($subscriber) ?
-                Nereus::trans('subscription-completed', ['course' => $course->name], 'nereus') :
-                Nereus::trans('subscription-repeated', [], 'nereus')
+            trans('nereus::nereus.subscription-completed', ['course' => $course->name])
         );
     }
 }

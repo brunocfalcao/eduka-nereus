@@ -39,7 +39,7 @@ class Migrate extends EdukaCommand
             app()->register($course['provider-class']);
 
             // Run php artisan migrate.
-            $this->info('Running PHP artisan migrate (for seeders)...');
+            $this->info('Running PHP artisan migrate ...');
 
             $output = new BufferedOutput();
             Artisan::call('migrate', [], $output);
