@@ -19,6 +19,37 @@ class Nereus
     }
 
     /**
+     * Retrieves the current context of the url analysis.
+     * Types:
+     *  'context' key:
+     * 'course' => We are not in any other context (fallback context).
+     * 'chapter' => We are showing/listing course chapters.
+     * 'episode' => We are showing an episode, or on an episode detail.
+     * 'serving' => 'backend', 'frontend' or 'admin' (nova).
+     *
+     * Inside the 'model', we grab the context instance (chapter model, etc.).
+     * Can be null also ['model' => null] if no model is instanciated.
+     *
+     * This allows specific code to run give the type of context we are, like
+     * the social meta tags rendering, finding a model, etc.
+     *
+     * @return array
+     */
+    public function context()
+    {
+        $context = [
+            'type' => 'course',
+            'model' => null,
+        ];
+
+        if (self::course()) {
+            $context['model'] = self::course();
+        }
+
+        return $context;
+    }
+
+    /**
      * Returns a translated locale, based on the course/backend context.
      * As example, for the canonical EN course-mastering-nova, there should be
      * a lang_path('en/course-mastering-nova.php') file. Then inside it

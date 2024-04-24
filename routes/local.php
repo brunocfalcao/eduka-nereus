@@ -10,7 +10,13 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/mailable/subscribed', function () {
-    return new SubscribedToCourseMail(Subscriber::find(1));
+
+    $subscriber = Subscriber::firstOrCreate([
+        'email' => 'bruno.falcao@live.com',
+        'course_id' => 1,
+    ]);
+
+    return new SubscribedToCourseMail($subscriber);
 });
 
 Route::get('mailable/order-created-new-user', function () {

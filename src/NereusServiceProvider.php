@@ -97,6 +97,12 @@ class NereusServiceProvider extends EdukaServiceProvider
             $this->registerUIProvider();
 
             /**
+             * Change the 'public' and 'url' disk to the course canonical path.
+             */
+            config(['filesystems.disks.public.root' => storage_path('app/public/'.$this->course->canonical)]);
+            config(['filesystems.disks.public.url' => env('APP_URL').'/storage/'.$this->course->canonical]);
+
+            /**
              * We will then register the course provider. No need to verify
              * if this course service provider is already registered via the
              * load_providers config key, since laravel already does that.
