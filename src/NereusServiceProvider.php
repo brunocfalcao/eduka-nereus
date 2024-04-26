@@ -96,11 +96,8 @@ class NereusServiceProvider extends EdukaServiceProvider
              */
             $this->registerUIProvider();
 
-            /**
-             * Change the 'public' and 'url' disk to the course canonical path.
-             */
-            config(['filesystems.disks.public.root' => storage_path('app/public/'.$this->course->canonical)]);
-            config(['filesystems.disks.public.url' => env('APP_URL').'/storage/'.$this->course->canonical]);
+            //Add a new filesystem configuration named 'course'.
+            $this->addFilesystemGroup();
 
             /**
              * We will then register the course provider. No need to verify
@@ -120,6 +117,11 @@ class NereusServiceProvider extends EdukaServiceProvider
         });
 
         $this->registerAdditionalProviders();
+    }
+
+    protected function addFilesystemGroup()
+    {
+        push_course_filesystem_driver();
     }
 
     protected function registerUIProvider()
