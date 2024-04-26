@@ -97,7 +97,7 @@ class NereusServiceProvider extends EdukaServiceProvider
             $this->registerUIProvider();
 
             //Add a new filesystem configuration named 'course'.
-            $this->addFilesystemGroup();
+            push_course_filesystem_driver($this->course);
 
             /**
              * We will then register the course provider. No need to verify
@@ -117,11 +117,6 @@ class NereusServiceProvider extends EdukaServiceProvider
         });
 
         $this->registerAdditionalProviders();
-    }
-
-    protected function addFilesystemGroup()
-    {
-        push_course_filesystem_driver();
     }
 
     protected function registerUIProvider()
