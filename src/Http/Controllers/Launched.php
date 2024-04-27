@@ -8,6 +8,6 @@ class Launched extends Controller
 {
     public function welcome()
     {
-        return view('course::launched');
+        return view('course::layouts.launched');
     }
 }
