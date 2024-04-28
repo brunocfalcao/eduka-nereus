@@ -32,7 +32,9 @@ class Prelaunched extends Controller
         ]);
 
         // Add subscriber to course.
-        $subscriber = Subscriber::create([
+        // For now we need to use the eduka-progressive for data retention.
+        $subscriber = Subscriber::connection(env('PROGRESSIVE_DB_CONNECTION'))
+                                ->create([
             'course_id' => $course->id,
             'email' => request()->email,
         ]);

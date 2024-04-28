@@ -80,8 +80,9 @@ class Nereus
      */
     public function course()
     {
-        return $this->matchCourse() ?:
-            Course::firstWhere('domain', $this->domain());
+        if ($this->matchCourse()) {
+            return Course::firstWhere('domain', $this->domain());
+        }
     }
 
     /**
@@ -91,9 +92,9 @@ class Nereus
      */
     public function backend()
     {
-        return $this->matchBackend() ?
-            Backend::firstWhere('domain', $this->domain()) :
-            null;
+        if ($this->matchBackend()) {
+            return Backend::firstWhere('domain', $this->domain());
+        }
     }
 
     /**
@@ -120,7 +121,7 @@ class Nereus
     {
         // Verify if the table courses exist.
         if (! Schema::hasTable('courses')) {
-            return null;
+            return false;
         }
 
         return Course::firstWhere('domain', $this->domain());
