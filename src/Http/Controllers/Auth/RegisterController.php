@@ -3,8 +3,7 @@
 namespace Eduka\Nereus\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use Eduka\Cube\Models\Student;
+use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -16,7 +15,7 @@ class RegisterController extends Controller
     | Register Controller
     |--------------------------------------------------------------------------
     |
-    | This controller handles the registration of new students as well as their
+    | This controller handles the registration of new users as well as their
     | validation and creation. By default this controller uses a trait to
     | provide this functionality without requiring any additional code.
     |
@@ -29,7 +28,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = '/home';
 
     /**
      * Create a new controller instance.
@@ -56,9 +55,9 @@ class RegisterController extends Controller
     }
 
     /**
-     * Create a new student instance after a valid registration.
+     * Create a new user instance after a valid registration.
      *
-     * @return User
+     * @return \App\Models\User
      */
     protected function create(array $data)
     {

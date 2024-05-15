@@ -2,11 +2,11 @@
 
 namespace Eduka\Nereus\Http\Controllers;
 
-use Eduka\Nereus\Facades\Nereus;
-use Eduka\Cube\Models\Subscriber;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Eduka\Cube\Models\Subscriber;
+use Eduka\Nereus\Facades\Nereus;
 use Eduka\Nereus\Rules\SubscriberExists;
+use Illuminate\Support\Facades\DB;
 
 class Prelaunched extends Controller
 {
@@ -44,11 +44,11 @@ class Prelaunched extends Controller
          * progressive database, until everything is done.
          */
         DB::connection(env('PROGRESSIVE_DB_CONNECTION'))
-          ->table('subscribers')
-          ->insert([
-            'course_id' => $subscriber->course_id,
-            'email' => $subscriber->email
-          ]);
+            ->table('subscribers')
+            ->insert([
+                'course_id' => $subscriber->course_id,
+                'email' => $subscriber->email,
+            ]);
 
         return view('course::layouts.prelaunched')->with(
             'message',

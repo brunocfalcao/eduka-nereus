@@ -28,8 +28,10 @@ class NereusServiceProvider extends EdukaServiceProvider
          * eduka.load_providers. They will always load no matter what
          * happens next.
          */
-        foreach (config('eduka.load_providers') as $provider) {
-            app()->register($provider);
+        if (is_array(config('eduka.load_providers'))) {
+            foreach (config('eduka.load_providers') as $provider) {
+                app()->register($provider);
+            }
         }
 
         /**
@@ -105,6 +107,13 @@ class NereusServiceProvider extends EdukaServiceProvider
              * load_providers config key, since laravel already does that.
              */
             $this->course->registerSelfProvider();
+        } else {
+            /**
+             * No domain was identified. Let's then load the Eduka routes.
+             * At least we will show the Eduka welcome screen.
+             */
+            $this->loadEdukaRoutes();
+            $this->loadEdukaViews();
         }
 
         parent::boot();
@@ -117,6 +126,23 @@ class NereusServiceProvider extends EdukaServiceProvider
         });
 
         $this->registerAdditionalProviders();
+    }
+
+    protected function loadEdukaViews()
+    {
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'eduka');
+    }
+
+    protected function loadEdukaRoutes()
+    {
+        $routesPath = __DIR__.'/../routes/eduka.php';
+
+        Route::middleware([
+            'web', RequestLog::class,
+        ])
+            ->group(function () use ($routesPath) {
+                include $routesPath;
+            });
     }
 
     protected function registerUIProvider()

@@ -20,7 +20,6 @@
         "php": "^8.2",
         "brunocfalcao/laravel-helpers": "dev-master",
         "spatie/laravel-honeypot": "^4.5",
-        "brunocfalcao/eduka-dev": "dev-master",
         "brunocfalcao/cerebrus": "dev-master",
         "brunocfalcao/eduka-cube": "dev-master",
         "brunocfalcao/eduka-nova": "dev-master",
