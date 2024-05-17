@@ -30,6 +30,7 @@ class Fresh extends EdukaCommand
         ');
 
         $courses = config('eduka.courses');
+        $backends = config('eduka.backends');
 
         // Deleting all file contents under the storage/app/public.
         $this->info('Deleting files under storage/app/public...');
@@ -39,6 +40,29 @@ class Fresh extends EdukaCommand
         $this->info('Running PHP artisan migrate:fresh for eduka database...');
         $result = Process::run('php artisan migrate:fresh --force');
         $this->info($result->output());
+
+        foreach ($backends as $package => $backend) {
+            // Boot course service provider.
+            $this->paragraph('Booting '.$package.' service provider ...');
+
+            if (class_exists($backend['provider-class'])) {
+                app()->register($backend['provider-class']);
+
+                // Run php artisan migrate.
+                $this->info('Running PHP artisan migrate (for seeders)...');
+
+                $output = new BufferedOutput();
+                Artisan::call('migrate', [], $output);
+                $this->info($output->fetch());
+
+                // Run php artisan vendor:publish for the respective service provider.
+                $this->info('Publishing backend assets for service provider '.$backend['provider-class'].'...');
+                $result = Process::run('php artisan vendor:publish --force --provider="'.$backend['provider-class'].'"');
+                $this->info($result->output());
+            } else {
+                $this->error('Service provider is not autoloaded. Skipping...');
+            }
+        }
 
         foreach ($courses as $package => $course) {
             // Boot course service provider.
