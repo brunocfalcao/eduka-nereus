@@ -110,7 +110,7 @@ class LoginController extends Controller
         }
 
         // Student doesn't belong to a course from this backend?
-        if (! $student->courses->where('backend_id', Nereus::backend()->id)->exists()) {
+        if (! $student->courses()->where('backend_id', Nereus::backend()->id)->exists()) {
             return false;
         }
 

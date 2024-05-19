@@ -38,12 +38,18 @@ class Nereus
     public function context()
     {
         $context = [
-            'type' => 'course',
+            'type' => null,
             'model' => null,
         ];
 
         if (self::course()) {
+            $context['type'] = 'course';
             $context['model'] = self::course();
+        }
+
+        if (self::backend()) {
+            $context['type'] = 'backend';
+            $context['model'] = self::backend();
         }
 
         return $context;
