@@ -19,8 +19,9 @@ class Prelaunched extends Controller
 
     public function welcome()
     {
-        return view('course::layouts.prelaunched')
-            ->with(['course' => Nereus::course()]);
+        return view('course::layouts.prelaunched')->with(
+            ['course' => Nereus::course()]
+        );
     }
 
     public function subscribe()
@@ -48,6 +49,8 @@ class Prelaunched extends Controller
             ->insert([
                 'course_id' => $subscriber->course_id,
                 'email' => $subscriber->email,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
         return view('course::layouts.prelaunched')->with(
