@@ -130,7 +130,7 @@ class Nereus
             return false;
         }
 
-        return Course::firstWhere('domain', $this->domain())->exists();
+        return Course::where('domain', $this->domain())->exists();
     }
 
     /*
