@@ -2,22 +2,10 @@
 
 use Eduka\Cube\Models\Course;
 use Eduka\Cube\Models\Order;
-use Eduka\Cube\Models\Subscriber;
 use Eduka\Services\Mail\Orders\OrderCreatedForExistingUserMail;
 use Eduka\Services\Mail\Orders\OrderCreatedForNewUserMail;
-use Eduka\Services\Mail\Subscribers\SubscribedToCourseMail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
-
-Route::get('/mailable/subscribed', function () {
-
-    $subscriber = Subscriber::firstOrCreate([
-        'email' => 'bruno.falcao@live.com',
-        'course_id' => 1,
-    ]);
-
-    return new SubscribedToCourseMail($subscriber);
-});
 
 Route::get('mailable/order-created-new-user', function () {
 
