@@ -4,6 +4,8 @@ use Eduka\Nereus\Http\Controllers\Prelaunched;
 use Illuminate\Support\Facades\Route;
 use Spatie\Honeypot\ProtectAgainstSpam;
 
+dd('routes files read');
+
 Route::get('/', [Prelaunched::class, 'welcome'])
     ->name('prelaunched.welcome');
 

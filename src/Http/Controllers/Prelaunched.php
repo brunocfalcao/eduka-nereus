@@ -19,7 +19,6 @@ class Prelaunched extends Controller
 
     public function welcome()
     {
-        dd('welcome!');
         return view('course::layouts.prelaunched')->with(
             ['course' => Nereus::course()]
         );
