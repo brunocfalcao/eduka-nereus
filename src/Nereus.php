@@ -110,6 +110,7 @@ class Nereus
      */
     public function matchBackend()
     {
+        dd($this->domain());
         // Verify if the table courses exist.
         if (! Schema::hasTable('backends')) {
             return false;
