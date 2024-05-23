@@ -84,6 +84,7 @@ class NereusServiceProvider extends EdukaServiceProvider
 
             // Frontend?
         } elseif (NereusFacade::matchCourse()) {
+            dd('inside');
             $this->course = NereusFacade::course();
 
             /**
