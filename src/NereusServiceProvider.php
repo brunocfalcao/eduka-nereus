@@ -65,7 +65,7 @@ class NereusServiceProvider extends EdukaServiceProvider
             return;
         }
 
-        dd(NereusFacade::matchBackend());
+        dd(NereusFacade::matchCourse());
 
         // Backend (student's backoffice) ?
         if (NereusFacade::matchBackend()) {
@@ -85,7 +85,7 @@ class NereusServiceProvider extends EdukaServiceProvider
             app()->register($this->backend->provider_namespace);
 
             // Frontend?
-        } elseif (NereusFacade::course()) {
+        } elseif (NereusFacade::matchCourse()) {
             $this->course = NereusFacade::course();
 
             /**
