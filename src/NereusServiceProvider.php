@@ -84,7 +84,6 @@ class NereusServiceProvider extends EdukaServiceProvider
 
             // Frontend?
         } elseif (NereusFacade::matchCourse()) {
-            dd('inside');
             $this->course = NereusFacade::course();
 
             /**
@@ -213,6 +212,7 @@ class NereusServiceProvider extends EdukaServiceProvider
 
     protected function loadFrontendRoutes()
     {
+        dd($this->course->state());
         switch ($this->course->state()) {
             case 'prelaunched':
                 $routesPath = __DIR__.'/../routes/prelaunched.php';
