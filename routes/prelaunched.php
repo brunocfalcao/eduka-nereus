@@ -12,9 +12,22 @@ Route::post('/', [Prelaunched::class, 'subscribe'])
     ->middleware(ProtectAgainstSpam::class)
     ->name('prelaunched.subscribe');
 
-// Dump routes for debugging
+// Dump routes for debugging with formatted output
 Route::get('/route/list', function () {
     Artisan::call('route:list');
     $output = Artisan::output();
-    return nl2br($output);
+
+    // Format output as HTML table
+    $lines = explode("\n", trim($output));
+    $htmlOutput = '<table border="1" cellspacing="0" cellpadding="5">';
+    foreach ($lines as $line) {
+        $htmlOutput .= '<tr>';
+        foreach (explode(' ', preg_replace('/\s+/', ' ', $line)) as $cell) {
+            $htmlOutput .= '<td>' . htmlentities($cell) . '</td>';
+        }
+        $htmlOutput .= '</tr>';
+    }
+    $htmlOutput .= '</table>';
+
+    return $htmlOutput;
 })->name('route.list');
