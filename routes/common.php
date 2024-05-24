@@ -12,8 +12,8 @@ Route::get(
     [ResetPasswordController::class, 'showResetForm']
 )->name('password.reset');
 
-oute::get('/mailable/subscribed/{method}', function ($method) {
-    // You can now use the $method variable in your logic
+Route::get('/mailable/subscribed/{method?}', function ($method = 'sync') {
+    // Validate the method parameter
     if (!in_array($method, ['queue', 'sync'])) {
         return response('Invalid method', 400);
     }
@@ -32,16 +32,14 @@ oute::get('/mailable/subscribed/{method}', function ($method) {
             'course_id' => $course->id,
         ]);
 
-        // Optionally trigger the event based on the method
         if ($method === 'queue') {
             // Dispatch the event to the queue
-            event(new \App\Events\SubscriberCreatedEvent($subscriber));
+            event(new SubscriberCreatedEvent($subscriber));
+            return 'Event triggered using queue.';
         } else {
-            // Trigger the event synchronously
-            \App\Events\SubscriberCreatedEvent::dispatchSync($subscriber);
+            // Return the mailable directly to the webpage
+            return new SubscribedToCourseMail($subscriber);
         }
-
-        return 'Event triggered using ' . $method . '.';
     } else {
         return response('Course not found', 404);
     }
