@@ -14,8 +14,11 @@ Route::get(
 
 Route::get('/mailable/subscribed', function () {
 
-    Subscriber::firstWhere('email', env('EDUKA_SUBSCRIBER_TEST_EMAIL'))
-        ->forceDelete();
+    $subscriber = Subscriber::firstWhere('email', env('EDUKA_SUBSCRIBER_TEST_EMAIL'));
+
+    if ($subscriber) {
+        $subscriber->forceDelete();
+    }
 
     Subscriber::create([
         'email' => env('EDUKA_SUBSCRIBER_TEST_EMAIL'),
