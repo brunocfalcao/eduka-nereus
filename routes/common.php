@@ -12,22 +12,37 @@ Route::get(
     [ResetPasswordController::class, 'showResetForm']
 )->name('password.reset');
 
-Route::get('/mailable/subscribed', function () {
+oute::get('/mailable/subscribed/{method}', function ($method) {
+    // You can now use the $method variable in your logic
+    if (!in_array($method, ['queue', 'sync'])) {
+        return response('Invalid method', 400);
+    }
 
-    $subscriber = Subscriber::firstWhere('email', env('EDUKA_SUBSCRIBER_TEST_EMAIL'));
+    $subscriberEmail = env('EDUKA_SUBSCRIBER_TEST_EMAIL');
+    $subscriber = Subscriber::firstWhere('email', $subscriberEmail);
 
     if ($subscriber) {
         $subscriber->forceDelete();
     }
 
-    Subscriber::create([
-        'email' => env('EDUKA_SUBSCRIBER_TEST_EMAIL'),
-        'course_id' => Course::firstWhere('domain', parse_url(request()->fullUrl())['host'])->id,
-    ]);
+    $course = Course::firstWhere('domain', parse_url(request()->fullUrl())['host']);
+    if ($course) {
+        $subscriber = Subscriber::create([
+            'email' => $subscriberEmail,
+            'course_id' => $course->id,
+        ]);
 
-    //event(new SubscriberCreatedEvent($subscriber));
+        // Optionally trigger the event based on the method
+        if ($method === 'queue') {
+            // Dispatch the event to the queue
+            event(new \App\Events\SubscriberCreatedEvent($subscriber));
+        } else {
+            // Trigger the event synchronously
+            \App\Events\SubscriberCreatedEvent::dispatchSync($subscriber);
+        }
 
-    return 'event triggered.';
-
-    //return new SubscribedToCourseMail($subscriber);
+        return 'Event triggered using ' . $method . '.';
+    } else {
+        return response('Course not found', 404);
+    }
 });
