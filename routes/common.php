@@ -1,5 +1,7 @@
 <?php
 
+use Eduka\Cube\Events\Subscribers\SubscriberCreatedEvent;
+use Eduka\Cube\Models\Course;
 use Eduka\Cube\Models\Subscriber;
 use Eduka\Nereus\Http\Controllers\Auth\ResetPasswordController;
 use Eduka\Services\Mail\Subscribers\SubscribedToCourseMail;
@@ -12,10 +14,17 @@ Route::get(
 
 Route::get('/mailable/subscribed', function () {
 
-    $subscriber = Subscriber::firstOrCreate([
-        'email' => 'bruno.falcao@live.com',
-        'course_id' => 1,
+    Subscriber::firstWhere('email', env('EDUKA_SUBSCRIBER_TEST_EMAIL'))
+        ->forceDelete();
+
+    Subscriber::create([
+        'email' => env('EDUKA_SUBSCRIBER_TEST_EMAIL'),
+        'course_id' => Course::firstWhere('domain', parse_url(request()->fullUrl())['host'])->id,
     ]);
 
-    return new SubscribedToCourseMail($subscriber);
+    //event(new SubscriberCreatedEvent($subscriber));
+
+    return 'event triggered.';
+
+    //return new SubscribedToCourseMail($subscriber);
 });
