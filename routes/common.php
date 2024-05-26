@@ -13,10 +13,6 @@ Route::get(
 )->name('password.reset');
 
 Route::get('/mailable/subscribed/{method?}', function ($method = 'sync') {
-    // Validate the method parameter
-    if (!in_array($method, ['queue', 'sync'])) {
-        return response('Invalid method', 400);
-    }
 
     $subscriberEmail = env('EDUKA_SUBSCRIBER_TEST_EMAIL');
     $subscriber = Subscriber::firstWhere('email', $subscriberEmail);
@@ -27,14 +23,17 @@ Route::get('/mailable/subscribed/{method?}', function ($method = 'sync') {
 
     $course = Course::firstWhere('domain', parse_url(request()->fullUrl())['host']);
     if ($course) {
-        $subscriber = Subscriber::create([
-            'email' => $subscriberEmail,
-            'course_id' => $course->id,
-        ]);
+        $subscriber = Subscriber::withoutEvents(function () use ($subscriberEmail, $course) {
+            return Subscriber::create([
+                'email' => $subscriberEmail,
+                'course_id' => $course->id,
+            ]);
+        });
 
         if ($method === 'queue') {
             // Dispatch the event to the queue
             event(new SubscriberCreatedEvent($subscriber));
+
             return 'Event triggered using queue.';
         } else {
             // Return the mailable directly to the webpage
