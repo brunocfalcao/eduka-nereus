@@ -1,39 +1,39 @@
 <?php
 
+use Eduka\Cube\Events\Subscribers\SubscriberCreatedEvent;
 use Eduka\Cube\Models\Course;
-use Eduka\Cube\Models\Order;
-use Eduka\Services\Mail\Orders\OrderCreatedForExistingUserMail;
-use Eduka\Services\Mail\Orders\OrderCreatedForNewUserMail;
-use Illuminate\Support\Facades\Password;
+use Eduka\Cube\Models\Subscriber;
+use Eduka\Services\Mail\Subscribers\SubscribedToCourseMail;
 use Illuminate\Support\Facades\Route;
 
-Route::get('mailable/order-created-new-user', function () {
+Route::get('/mailable/subscribed/{method?}', function ($method = 'sync') {
 
-    $student = User::find(1);
+    $subscriberEmail = env('EDUKA_SUBSCRIBER_TEST_EMAIL');
+    $subscriber = Subscriber::firstWhere('email', $subscriberEmail);
 
-    // Create a password reset token for the user.
-    $token = Password::broker()->createToken($student);
+    if ($subscriber) {
+        $subscriber->forceDelete();
+    }
 
-    // Construct password reset url.
-    $url = route(
-        'password.reset',
-        [
-            'token' => $token,
-            'email' => urlencode($student->email),
-        ]
-    );
+    $course = Course::firstWhere('domain', parse_url(request()->fullUrl())['host']);
+    if ($course) {
+        $subscriber = Subscriber::withoutEvents(function () use ($subscriberEmail, $course) {
+            return Subscriber::create([
+                'email' => $subscriberEmail,
+                'course_id' => $course->id,
+            ]);
+        });
 
-    return new OrderCreatedForNewUserMail(
-        $student,
-        Order::find(1),
-        $url
-    );
-});
+        if ($method === 'queue') {
+            // Dispatch the event to the queue
+            event(new SubscriberCreatedEvent($subscriber));
 
-Route::get('mailable/order-created-existing-user', function () {
-    return new OrderCreatedForExistingUserMail(
-        User::find(1),
-        Order::find(1),
-        $url = 'https://'.Course::find(1)->domain
-    );
+            return 'Event triggered using queue, and email sent.';
+        } else {
+            // Return the mailable directly to the webpage. No email sent.
+            return new SubscribedToCourseMail($subscriber);
+        }
+    } else {
+        return response('Course not found', 404);
+    }
 });

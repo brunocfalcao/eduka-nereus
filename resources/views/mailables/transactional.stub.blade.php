@@ -1,144 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Template</title>
-    <style>
-        .social-icon {
-            width: 24px;
-            height: 24px;
-            vertical-align: middle;
-            margin: 0 5px;
-        }
-        p {
-            line-height: 1.6;
-            margin: 20px 0;
-        }
-        .button {
-            display: block;
-            width: 200px;
-            margin: 20px auto;
-            padding: 10px;
-            text-align: center;
-            background-color: #007bff;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .button-group {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
-        }
-        .sub-line {
-            font-size: 12px;
-            color: #555555;
-            text-align: center;
-            margin: 20px 0;
-        }
-        .image-text {
-            display: flex;
-            align-items: center;
-            margin: 20px 0;
-        }
-        .image-text img {
-            max-width: 150px;
-            height: auto;
-            margin-right: 20px;
-        }
-        .image-text div {
-            flex: 1;
-        }
-        @media (max-width: 600px) {
-            .button {
-                width: 100%;
-                margin: 10px 0;
-            }
-            .button-group {
-                flex-direction: column;
-                gap: 10px;
-            }
-            .image-text {
-                flex-direction: column;
-                text-align: center;
-            }
-            .image-text img {
-                margin: 0 0 10px 0;
-            }
-        }
-    </style>
-</head>
-<body style="font-family: Arial, sans-serif; margin: 0; padding: 20px 0; background-color: #f4f4f4;">
+<x-email::newsletter title="Welcome to [Product Name]!"
+                     themeColor="#3869D4"
+                     secondaryColor="#22BC66"
+                     dangerColor="#FF6136">
+    <x-slot name="preheader">
+        Thanks for trying out [Product Name]. We’ve pulled together some information and resources to help you get started.
+    </x-slot>
 
-<!-- Header Start -->
-<div style="text-align: center; padding: 20px 0; background-color: #f4f4f4;">
-    <img src="https://placehold.co/150x50" alt="Postmark" style="max-width: 100%; height: auto;">
-</div>
-<!-- Header End -->
+    <x-slot name="header">
+        <x-email::header-logo src="https://placehold.co/150x50" alt="Logo" width="150" height="50" />
+        <!-- Alternatively, you could use the header title component like this: -->
+        <!-- <x-email::header-title color="#333" href="https://example.com">[Product Name]</x-email::header-title> -->
+    </x-slot>
 
-<!-- Container Start -->
-<div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border: 1px solid #e0e0e0;">
+    <x-email::paragraph>
+        Thanks for trying [Product Name]. We’re thrilled to have you on board.
+    </x-email::paragraph>
 
-    <!-- Content Start -->
-    <div style="padding: 20px; text-align: left;">
-        <!-- Welcome Paragraph Start -->
-        <p>Hi {name},</p>
-        <!-- Welcome Paragraph End -->
+    <x-email::paragraph>
+        To get the most out of [Product Name], do this primary next step:
+    </x-email::paragraph>
 
-        <!-- Main Paragraph Start -->
-        <p>A request was received for Postmark along with your email address. If you think you received this message by mistake, you can ignore it or contact support.</p>
-        <p>To reset your password for account, click the button below. Remember to use your username {username} to log in, which is different from your email address.</p>
-        <!-- Main Paragraph End -->
+    <x-email::single-button url="#" bgColor="#3869D4" text="Do this Next">
+    </x-email::single-button>
 
-        <!-- Centered Button Start -->
-        <a href="{reset_link}" class="button">Reset Password</a>
-        <!-- Centered Button End -->
+    <x-email::paragraph>
+        For reference, here's your login information:
+    </x-email::paragraph>
 
-        <p>Password reset links are valid for 60 minutes.</p>
+    <x-email::details>
+        <x-email::detail-line label="Login Page" value="aa@aa.com"></x-email::detail-line>
+        <x-email::detail-line label="Username" value="bfalcao"></x-email::detail-line>
+    </x-email::details>
 
-        <!-- Two Centered Buttons Start -->
-        <div class="button-group">
-            <a href="{link1}" class="button" style="margin: 0;">Button 1</a>
-            <a href="{link2}" class="button" style="margin: 0;">Button 2</a>
-        </div>
-        <!-- Two Centered Buttons End -->
+    <x-email::paragraph>
+        You've started a 3 day trial. You can upgrade to a paying account or cancel any time.
+    </x-email::paragraph>
 
-        <!-- Sub-Line Start -->
-        <div class="sub-line">This is a disclaimer or sub-line text in dark gray and smaller font.</div>
-        <!-- Sub-Line End -->
+    <x-email::details>
+        <x-email::detail-line label="Trial Start Date" value="2024-05-23"></x-email::detail-line>
+        <x-email::detail-line label="Trial End Date" value="2025-05-25"></x-email::detail-line>
+    </x-email::details>
 
-        <!-- Image and Text Block Start -->
-        <div class="image-text">
-            <img src="https://placehold.co/150x100" alt="Video Thumbnail">
-            <div>
-                <p>This is a description of the video. You can include more details here to explain what the video is about and why it might be interesting to the reader.</p>
-            </div>
-        </div>
-        <!-- Image and Text Block End -->
+    <x-email::paragraph>
+        If you have any questions, feel free to email our customer success team. (We're lightning quick at replying.) We also offer live chat during business hours.
+    </x-email::paragraph>
 
-    </div>
-    <!-- Content End -->
+    <x-email::paragraph>
+        Thanks, [Sender Name] and the [Product Name] Team
+    </x-email::paragraph>
 
-</div>
-<!-- Container End -->
+    <x-email::paragraph>
+        <strong>P.S.</strong> Need immediate help getting started? Check out our help documentation. Or, just reply to this email, the [Product Name] support team is always ready to help!
+    </x-email::paragraph>
 
-<!-- Footer Start -->
-<div style="text-align: center; padding: 20px 0;">
-    <p style="font-size: 12px; color: #555555;">
-        Mastering Nova - <a href="https://masteringnova.com" style="color: #555555; text-decoration: none;">masteringnova.com</a>
-    </p>
-    <p>
-        <a href="{twitter_link}" style="color: #555555; text-decoration: none;">
-            <img src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/icons/twitter.svg" alt="Twitter" class="social-icon">
-        </a>
-        <a href="{github_link}" style="color: #555555; text-decoration: none;">
-            <img src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/icons/github.svg" alt="GitHub" class="social-icon">
-        </a>
-    </p>
-</div>
-<!-- Footer End -->
+    <x-email::call-to-action heading="10% off your next purchase!"
+                             body="Thanks for your support! Here's a coupon for 10% off your next purchase."
+                             button_url="http://example.com"
+                             button_text="Use this discount now..."
+                             button_bg_color="#22BC66">
+    </x-email::call-to-action>
 
-</body>
-</html>
+    <x-email::thumbnail-text thumbnailUrl="#" thumbnailSrc="https://placehold.co/150x150" thumbnailAlt="Thumbnail" text="This is a new tutorial video that explains the features of our product in detail. Click to watch!">
+    </x-email::thumbnail-text>
+
+    <x-email::subline>
+        If you’re having trouble with the button above, copy and paste the URL below into your web browser.<br>
+        #
+    </x-email::subline>
+
+    <x-slot name="footer">
+        <x-email::footer>© 2024 [Product Name]. All rights reserved.</x-email::footer>
+    </x-slot>
+</x-email::newsletter>
