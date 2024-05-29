@@ -56,6 +56,13 @@ class NereusServiceProvider extends EdukaServiceProvider
         $this->loadLocale();
 
         /**
+         * The Eduka routes and views are always loaded since they
+         * are mostly used on commands, jobs, image loading paths, etc.
+         */
+        $this->loadEdukaRoutes();
+        $this->loadEdukaViews();
+
+        /**
          * If we are in a console context, we don't need to try
          * to match an backend or a course.
          */
@@ -68,6 +75,11 @@ class NereusServiceProvider extends EdukaServiceProvider
         // Backend (student's backoffice) ?
         if (NereusFacade::matchBackend()) {
             $this->backend = NereusFacade::backend();
+
+            /**
+             * Override APP URL so the route() gives the right result.
+             */
+            override_app_url($this->backend->domain);
 
             /**
              * Load the backend backend routes. Nova, etc.
@@ -85,6 +97,11 @@ class NereusServiceProvider extends EdukaServiceProvider
             // Frontend?
         } elseif (NereusFacade::matchCourse()) {
             $this->course = NereusFacade::course();
+
+            /**
+             * Override APP URL so the route() gives the right result.
+             */
+            override_app_url($this->course->domain);
 
             /**
              * Load the routes, analytics middleware, course service
@@ -107,13 +124,6 @@ class NereusServiceProvider extends EdukaServiceProvider
              * load_providers config key, since laravel already does that.
              */
             $this->course->registerSelfProvider();
-        } else {
-            /**
-             * No domain was identified. Let's then load the Eduka routes.
-             * At least we will show the Eduka welcome screen.
-             */
-            $this->loadEdukaRoutes();
-            $this->loadEdukaViews();
         }
 
         parent::boot();
