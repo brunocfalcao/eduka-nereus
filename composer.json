@@ -19,10 +19,10 @@
     "require": {
         "php": "^8.2",
         "brunocfalcao/laravel-helpers": "dev-master",
+        "brunocfalcao/eduka-helpers": "dev-master",
         "spatie/laravel-honeypot": "^4.5",
         "brunocfalcao/cerebrus": "dev-master",
         "brunocfalcao/eduka-cube": "dev-master",
-        "brunocfalcao/eduka-nova": "dev-master",
         "brunocfalcao/eduka-ui": "dev-master",
         "brunocfalcao/eduka-payments": "dev-master",
         "brunocfalcao/eduka-abstracts": "dev-master",
