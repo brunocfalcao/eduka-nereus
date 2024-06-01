@@ -77,11 +77,6 @@ class NereusServiceProvider extends EdukaServiceProvider
             $this->backend = NereusFacade::backend();
 
             /**
-             * Override APP URL so the route() gives the right result.
-             */
-            override_app_url($this->backend->domain);
-
-            /**
              * Load the backend backend routes. Nova, etc.
              */
             $this->loadBackendRoutes();
@@ -99,11 +94,6 @@ class NereusServiceProvider extends EdukaServiceProvider
             $this->course = NereusFacade::course();
 
             /**
-             * Override APP URL so the route() gives the right result.
-             */
-            override_app_url($this->course->domain);
-
-            /**
              * Load the routes, analytics middleware, course service
              * provider, etc.
              */
@@ -115,8 +105,8 @@ class NereusServiceProvider extends EdukaServiceProvider
              */
             $this->registerUIProvider();
 
-            //Add a new filesystem configuration named 'course'.
-            push_course_filesystem_driver($this->course);
+            //Add the course logic into the filesystem 'eduka' disk.
+            push_eduka_filesystem_disk($this->course);
 
             /**
              * We will then register the course provider. No need to verify

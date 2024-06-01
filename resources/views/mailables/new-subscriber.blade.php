@@ -1,4 +1,4 @@
-<x-email::newsletter title="Thanks for subscribing to {{ $course->name }} (Nereus base)"
+<x-email::newsletter title="Thanks for subscribing to {{ $course->name }}"
                      primaryColor="{{ $course->theme['primary-color'] }}"
                      secondaryColor="{{ $course->theme['secondary-color'] }}"
                      dangerColor="{{ $course->theme['danger-color'] }}">
@@ -7,9 +7,11 @@
     </x-slot>
 
     <x-slot name="header">
-        <x-email::header-logo src="{{ eduka_url($course->filename_email_logo) }}" alt="{{ $course->domain }}" width="150" height="50" />
-        <!-- Alternatively, you could use the header title component like this: -->
-        <!-- <x-email::header-title color="#333" href="https://example.com">[Product Name]</x-email::header-title> -->
+        @if(file_exists(storage_path('app/public/' . $course->canonical . '/' . $course->filename_email_logo)))
+        <x-email::header-logo src="{{ Storage::disk('eduka')->url($course->filename_email_logo) }}" alt="{{ $course->name }}" width="150" height="50" />
+        @else
+        <x-email::header-title color="#333" href="{{ eduka_url($course->domain) }}">{{ $course->name }}</x-email::header-title>
+        @endif
     </x-slot>
 
     <x-email::paragraph>

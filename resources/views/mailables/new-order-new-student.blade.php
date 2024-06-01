@@ -7,9 +7,11 @@
     </x-slot>
 
     <x-slot name="header">
-        <x-email::header-logo src="{{ eduka_url($order->course->filename_email_logo) }}" alt="{{ $order->course->domain }}" width="150" height="50" />
-        <!-- Alternatively, you could use the header title component like this: -->
-        <!-- <x-email::header-title color="#333" href="https://example.com">[Product Name]</x-email::header-title> -->
+        @if(file_exists(storage_path('app/public/' . $order->course->canonical . '/' . $order->course->filename_email_logo)))
+        <x-email::header-logo src="{{ Storage::disk('eduka')->url($order->course->filename_email_logo) }}" alt="{{ $order->course->name }}" width="150" height="50" />
+        @else
+        <x-email::header-title color="#333" href="{{ eduka_url($order->course->domain) }}">{{ $order->course->name }}</x-email::header-title>
+        @endif
     </x-slot>
 
     <x-email::paragraph>
@@ -22,17 +24,17 @@
     </x-email::paragraph>
 
     <x-email::call-to-action heading="Click on the button to reset your password"
-                             body="Valid for the first week after the launch date"
+                             body="After resetting your password, you can login into your backoffice at <a href='{{ eduka_url($order->course->backend->domain) }}' target='_new'>{{ $order->course->backend->domain }}</a>"
                              buttonUrl="{{ $resetLink }}"
                              buttonText="Reset your password"
                              buttonBgColor="{{ $order->course->theme['primary-color'] }}">
     </x-email::call-to-action>
 
     <x-email::paragraph>
-        <br/>After resetting your password you can login on <a target="_new" href="https://{{ $order->course->backend->domain }}/login">{{ $order->course->backend->name }}</a>
+        <br/>Once again, thank you and feel free to reach me, by email anytime, for any questions you have!
     </x-email::paragraph>
 
     <x-slot name="footer">
-        <x-email::footer><a target="_new" href="https://{{ $order->course->domain }}">{{ $order->course->name }}</a>. All rights reserved.</x-email::footer>
+        <x-email::footer><a target="_new" href="{{ eduka_url($order->course->domain) }}">{{ $order->course->name }}</a>. All rights reserved.</x-email::footer>
     </x-slot>
 </x-email::newsletter>
