@@ -58,6 +58,9 @@ class NereusServiceProvider extends EdukaServiceProvider
         /**
          * The Eduka routes and views are always loaded since they
          * are mostly used on commands, jobs, image loading paths, etc.
+         *
+         * They are also loaded for the APP_URL, for instance for
+         * payment webhooks.
          */
         $this->loadEdukaRoutes();
         $this->loadEdukaViews();
