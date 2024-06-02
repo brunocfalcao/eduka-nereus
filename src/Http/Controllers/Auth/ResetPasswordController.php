@@ -3,8 +3,12 @@
 namespace Eduka\Nereus\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Password as PasswordRule;
 
 class ResetPasswordController extends Controller
 {
@@ -39,11 +43,11 @@ class ResetPasswordController extends Controller
     {
         $token = $request->route()->parameter('token');
 
-        return view('backend::reset-password')->with(
-            ['token' => $token,
-                'email' => $request->email,
-                'name' => $request->name]
-        );
+        return view('backend::auth.reset-password')->with([
+            'token' => $token,
+            'email' => $request->email,
+            'name' => $request->name,
+        ]);
     }
 
     /**
@@ -53,13 +57,12 @@ class ResetPasswordController extends Controller
      */
     public function reset(Request $request)
     {
-        dd($request->all());
-
         $request->validate($this->rules(), $this->validationErrorMessages());
 
         // Here we will attempt to reset the user's password. If it is successful we
         // will update the password on an actual user model and persist it to the
         // database. Otherwise we will parse the error and return the response.
+
         $response = $this->broker()->reset(
             $this->credentials($request),
             function ($user, $password) {
@@ -73,5 +76,55 @@ class ResetPasswordController extends Controller
         return $response == Password::PASSWORD_RESET
                     ? $this->sendResetResponse($request, $response)
                     : $this->sendResetFailedResponse($request, $response);
+    }
+
+    /**
+     * Get the password reset validation rules.
+     *
+     * @return array
+     */
+    protected function rules()
+    {
+        $rules = [
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => ['required', 'confirmed', PasswordRule::defaults()],
+        ];
+
+        if (array_key_exists('name', request()->all())) {
+            $rules['name'] = 'required';
+        }
+
+        return $rules;
+    }
+
+    /**
+     * Reset the given user's password.
+     *
+     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
+     * @param  string  $password
+     * @return void
+     */
+    protected function resetPassword($user, $password)
+    {
+        $this->setUserPassword($user, $password);
+
+        $this->setName($user, request()->input('name'));
+
+        $user->setRememberToken(Str::random(60));
+
+        $user->save();
+
+        event(new PasswordReset($user));
+
+        $this->guard()->login($user);
+    }
+
+    protected function setName($user, $name)
+    {
+        // In case there is a name on the request, update it too.
+        if ($name) {
+            $user->name = $name;
+        }
     }
 }
