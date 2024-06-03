@@ -11,7 +11,8 @@ Route::post('/lemonsqueezy/webhook', WebhookController::class)
 
 Route::get('/lemonsqueezy/webhook', function () {
 
-    $student = Student::all()->last();
+    $student = Student::query()->latest()->first();
+
     $token = '12345';
 
     return
