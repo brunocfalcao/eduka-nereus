@@ -25,7 +25,7 @@
 
     <x-email::call-to-action heading="Click on the button to access your backoffice"
                              body=""
-                             buttonUrl="{{ $order->course->backend->domain }}"
+                             buttonUrl="{{ eduka_url($order->course->backend->domain) }}"
                              buttonText="Access your backoffice"
                              buttonBgColor="{{ $order->course->theme['primary-color'] }}">
     </x-email::call-to-action>
