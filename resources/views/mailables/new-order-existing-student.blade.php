@@ -8,7 +8,7 @@
 
     <x-slot name="header">
         @if(file_exists(storage_path('app/public/' . $order->course->canonical . '/' . $order->course->filename_email_logo)))
-        <x-email::header-logo src="{{ Storage::disk('eduka')->url($order->course->filename_email_logo) }}" alt="{{ $order->course->name }}" width="150" height="50" />
+        <x-email::header-logo src="{{ Storage::disk($order->course->canonical)->url($order->course->filename_email_logo) }}" alt="{{ $order->course->name }}" width="150" height="50" />
         @else
         <x-email::header-title color="#333" href="{{ eduka_url($order->course->domain) }}">{{ $order->course->name }}</x-email::header-title>
         @endif
