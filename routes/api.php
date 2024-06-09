@@ -17,7 +17,7 @@ Route::get('/lemonsqueezy/webhook', function () {
 
     return
         dd(
-            eduka_route(
+            route_with_custom_domain(
                 $student->courses->first()->backend->domain,
                 'password.reset',
                 [

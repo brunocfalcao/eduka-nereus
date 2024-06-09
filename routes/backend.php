@@ -30,6 +30,13 @@ Route::get(
     ->middleware('auth')
     ->name('home');
 
+Route::get(
+    'profile',
+    [HomeController::class, 'profile']
+)
+    ->middleware('auth')
+    ->name('profile');
+
 // Execute logout
 Route::post(
     'logout',

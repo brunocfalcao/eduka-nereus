@@ -109,7 +109,7 @@ class NereusServiceProvider extends EdukaServiceProvider
             $this->registerUIProvider();
 
             //Add the course logic into the filesystem 'eduka' disk.
-            push_canonical_filesystem_disk($this->course->canonical);
+            push_canonicals_filesystem_disks();
 
             /**
              * We will then register the course provider. No need to verify
