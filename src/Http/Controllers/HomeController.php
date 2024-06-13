@@ -2,10 +2,11 @@
 
 namespace Eduka\Nereus\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\Foundation\Application;
 
 class HomeController extends Controller
 {
@@ -21,6 +22,8 @@ class HomeController extends Controller
 
     public function index(): \Illuminate\Foundation\Application|View|Factory|Application
     {
-        return view('backend::home');
+        return Auth::user()->courses->count() == 1 ?
+            view('backend::home-one-course') :
+            view('backend::home-multiple-courses');
     }
 }
