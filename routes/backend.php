@@ -1,5 +1,6 @@
 <?php
 
+use Eduka\Nereus\Http\Controllers\Auth\ForgotPasswordController;
 use Eduka\Nereus\Http\Controllers\Auth\LoginController;
 use Eduka\Nereus\Http\Controllers\Auth\ResetPasswordController;
 use Eduka\Nereus\Http\Controllers\HomeController;
@@ -55,6 +56,36 @@ Route::post(
     'password/reset',
     [ResetPasswordController::class, 'reset']
 )->name('password.update');
+
+Route::get(
+    'password/reset',
+    [ForgotPasswordController::class, 'showLinkRequestForm']
+)->name('password.request')
+    ->middleware(ProtectAgainstSpam::class);
+
+// ---------- TESTING PURPOSES ----
+
+Route::get('/chapters/', function () {
+    return view('backend::chapters');
+});
+
+Route::get('/course/enrolled/', function () {
+    return view('backend::course-enrolled');
+});
+
+Route::get('/activity/', function () {
+    return view('backend::activity');
+});
+
+Route::get('/profile/', function () {
+    return view('backend::profile.profile', ['profile_page' => 'profile']);
+});
+
+Route::get('/billing/', function () {
+    return view('backend::profile.billing', ['profile_page' => 'billing']);
+});
+
+// --------------------------------
 
 /*
 done:
