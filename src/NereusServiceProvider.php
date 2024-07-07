@@ -71,10 +71,9 @@ class NereusServiceProvider extends EdukaServiceProvider
          */
         if (app()->runningInConsole()) {
             parent::boot();
-
             return;
         }
-
+        
         // Backend (student's backoffice) ?
         if (NereusFacade::matchBackend()) {
             $this->backend = NereusFacade::backend();
