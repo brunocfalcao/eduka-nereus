@@ -41,7 +41,7 @@ class Migrate extends EdukaCommand
             // Run php artisan migrate.
             $this->info('Running PHP artisan migrate ...');
 
-            $output = new BufferedOutput();
+            $output = new BufferedOutput;
             Artisan::call('migrate', [], $output);
             $this->info($output->fetch());
 

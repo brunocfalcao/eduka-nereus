@@ -5,11 +5,11 @@ use Eduka\Cube\Models\Student;
 use Eduka\Payments\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/lemonsqueezy/webhook', WebhookController::class)
-    ->name('purchase.webhook')
+Route::post('/payments/webhook', WebhookController::class)
+    ->name('payments.webhook')
     ->withoutMiddleware([VerifyCsrfToken::class]);
 
-Route::get('/lemonsqueezy/webhook', function () {
+Route::get('/payments/webhook', function () {
 
     $student = Student::query()->latest()->first();
 

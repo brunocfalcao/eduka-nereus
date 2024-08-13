@@ -33,7 +33,7 @@ class Prelaunched extends Controller
             'uuid' => 'exists:courses,uuid',
         ]);
 
-        $subscriber = new Subscriber();
+        $subscriber = new Subscriber;
 
         $subscriber = $subscriber->create([
             'course_id' => $course->id,

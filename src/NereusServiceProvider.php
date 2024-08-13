@@ -71,9 +71,10 @@ class NereusServiceProvider extends EdukaServiceProvider
          */
         if (app()->runningInConsole()) {
             parent::boot();
+
             return;
         }
-        
+
         // Backend (student's backoffice) ?
         if (NereusFacade::matchBackend()) {
             $this->backend = NereusFacade::backend();
@@ -89,7 +90,7 @@ class NereusServiceProvider extends EdukaServiceProvider
              * a single domain and then just have courses, and backends as
              * domain aliases.
              */
-            app()->register($this->backend->provider_namespace);
+            app()->register($this->backend->service_provider_class);
 
             // Frontend?
         } elseif (NereusFacade::matchCourse()) {
@@ -124,7 +125,7 @@ class NereusServiceProvider extends EdukaServiceProvider
     public function register()
     {
         $this->app->bind('eduka-nereus', function () {
-            return new Nereus();
+            return new Nereus;
         });
 
         $this->registerAdditionalProviders();
