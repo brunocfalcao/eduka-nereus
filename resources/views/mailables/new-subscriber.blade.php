@@ -7,8 +7,8 @@
     </x-slot>
 
     <x-slot name="header">
-        @if(file_exists(storage_path('app/public/' . $course->canonical . '/' . $course->filename_email_logo)))
-        <x-email::header-logo src="{{ Storage::disk($course->canonical)->url($course->filename_email_logo) }}" alt="{{ $course->name }}" width="150" height="50" />
+        @if(file_exists(storage_path('app/public/' . $course->canonical . '/' . $course->filename_logo)))
+        <x-email::header-logo src="{{ Storage::disk($course->canonical)->url($course->filename_logo) }}" alt="{{ $course->name }}" width="150" height="50" />
         @else
         <x-email::header-title color="#333" href="{{ url_with_app_http_scheme($course->domain) }}">{{ $course->name }}</x-email::header-title>
         @endif
