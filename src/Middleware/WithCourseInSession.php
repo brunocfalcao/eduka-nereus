@@ -6,7 +6,7 @@ use Closure;
 use Eduka\Nereus\Facades\Nereus;
 use Illuminate\Http\Request;
 
-class WithCourse
+class WithCourseInSession
 {
     public function handle(Request $request, Closure $next)
     {

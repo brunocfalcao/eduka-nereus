@@ -31,6 +31,7 @@ Route::get(
     ->middleware('auth')
     ->name('home');
 
+// Show the student profile
 Route::get(
     'profile',
     [HomeController::class, 'profile']
@@ -45,18 +46,19 @@ Route::post(
 )
     ->name('logout');
 
-// Show reset form, after clicking on the reset password email link.
+// Show reset form, after clicking on the reset password email link
 Route::get(
     'password/reset/{token}',
     [ResetPasswordController::class, 'showResetForm']
 )->name('password.reset');
 
-// Submits a reset password that was just changed.
+// Submits a reset password that was just changed
 Route::post(
     'password/reset',
     [ResetPasswordController::class, 'reset']
 )->name('password.update');
 
+// Show form to request a link to request the password
 Route::get(
     'password/reset',
     [ForgotPasswordController::class, 'showLinkRequestForm']
