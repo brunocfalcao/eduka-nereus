@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
 use Eduka\Nereus\Http\Controllers\Launched;
 use Eduka\Payments\Http\Controllers\RedirectController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [Launched::class, 'welcome'])
