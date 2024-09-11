@@ -5,7 +5,7 @@ namespace Eduka\Nereus\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Eduka\Nereus\Facades\Nereus;
 
-class HomeController extends Controller
+class HomePageController extends Controller
 {
 
     /**

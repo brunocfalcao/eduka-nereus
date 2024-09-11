@@ -8,7 +8,9 @@ use Eduka\Nereus\Commands\Fresh;
 use Eduka\Nereus\Commands\Migrate;
 use Eduka\Nereus\Facades\Nereus as NereusFacade;
 use Eduka\Nereus\Middleware\RequestLog;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
+use ProtoneMedia\LaravelPaddle\Api\Api;
 
 class NereusServiceProvider extends EdukaServiceProvider
 {
@@ -133,16 +135,17 @@ class NereusServiceProvider extends EdukaServiceProvider
 
     protected function loadEdukaViews()
     {
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'eduka');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'eduka');
     }
 
     protected function loadEdukaRoutes()
     {
-        $routesPath = __DIR__.'/../routes/eduka.php';
-        $apiRoutesPath = __DIR__.'/../routes/api.php';
+        $routesPath = __DIR__ . '/../routes/eduka.php';
+        $apiRoutesPath = __DIR__ . '/../routes/api.php';
 
         Route::middleware([
-            'web', RequestLog::class,
+            'web',
+            RequestLog::class,
         ])
             ->group(function () use ($routesPath) {
                 include $routesPath;
@@ -150,7 +153,8 @@ class NereusServiceProvider extends EdukaServiceProvider
 
         // Load the payments webhook on the api middleware.
         Route::middleware([
-            'api', RequestLog::class,
+            'api',
+            RequestLog::class,
         ])
             ->group(function () use ($apiRoutesPath) {
                 include $apiRoutesPath;
@@ -172,16 +176,17 @@ class NereusServiceProvider extends EdukaServiceProvider
 
     protected function loadLocale()
     {
-        $this->loadTranslationsFrom(__DIR__.'/../lang', 'nereus');
+        $this->loadTranslationsFrom(__DIR__ . '/../lang', 'nereus');
     }
 
     protected function loadEnvironmentBaseRoutes()
     {
-        $envRoute = __DIR__.'/../routes/'.app()->environment().'.php';
+        $envRoute = __DIR__ . '/../routes/' . app()->environment() . '.php';
 
         if ($envRoute) {
             Route::middleware([
-                'web', RequestLog::class,
+                'web',
+                RequestLog::class,
             ])
                 ->group(function () use ($envRoute) {
                     include $envRoute;
@@ -191,10 +196,12 @@ class NereusServiceProvider extends EdukaServiceProvider
 
     protected function loadCommonRoutes()
     {
-        $routesPath = __DIR__.'/../routes/common.php';
+        $routesPath = __DIR__ . '/../routes/common.php';
 
         Route::middleware([
-            'web', RequestLog::class,
+            'web',
+            RequestLog::class,
+            'api'
         ])
             ->group(function () use ($routesPath) {
                 include $routesPath;
@@ -203,10 +210,11 @@ class NereusServiceProvider extends EdukaServiceProvider
 
     protected function loadBackendRoutes()
     {
-        $routesPath = __DIR__.'/../routes/backend.php';
+        $routesPath = __DIR__ . '/../routes/backend.php';
 
         Route::middleware([
-            'web', RequestLog::class,
+            'web',
+            RequestLog::class,
         ])
             ->group(function () use ($routesPath) {
                 include $routesPath;
@@ -217,16 +225,17 @@ class NereusServiceProvider extends EdukaServiceProvider
     {
         switch ($this->course->state()) {
             case 'prelaunched':
-                $routesPath = __DIR__.'/../routes/prelaunched.php';
+                $routesPath = __DIR__ . '/../routes/prelaunched.php';
                 break;
 
             case 'launched':
-                $routesPath = __DIR__.'/../routes/launched.php';
+                $routesPath = __DIR__ . '/../routes/launched.php';
                 break;
         }
 
         Route::middleware([
-            'web', RequestLog::class,
+            'web',
+            RequestLog::class,
         ])
             ->group(function () use ($routesPath) {
                 include $routesPath;

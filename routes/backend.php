@@ -3,7 +3,8 @@
 use Eduka\Nereus\Http\Controllers\Auth\ForgotPasswordController;
 use Eduka\Nereus\Http\Controllers\Auth\LoginController;
 use Eduka\Nereus\Http\Controllers\Auth\ResetPasswordController;
-use Eduka\Nereus\Http\Controllers\HomeController;
+use Eduka\Nereus\Http\Controllers\HomePageController;
+use Eduka\Nereus\Http\Controllers\EpisodePageController;
 use Illuminate\Support\Facades\Route;
 use Spatie\Honeypot\ProtectAgainstSpam;
 
@@ -26,7 +27,7 @@ Route::post(
 // Show the dashboard
 Route::get(
     'home',
-    [HomeController::class, 'index']
+    [HomePageController::class, 'index']
 )
     ->middleware('auth')
     ->name('home');
@@ -34,7 +35,7 @@ Route::get(
 // Show the student profile
 Route::get(
     'profile',
-    [HomeController::class, 'profile']
+    [HomePageController::class, 'profile']
 )
     ->middleware('auth')
     ->name('profile');
@@ -69,10 +70,6 @@ Route::get(
 
 Route::get('/chapters/', function () {
     return view('backend::chapters');
-});
-
-Route::get('/course/enrolled/', function () {
-    return view('backend::course-enrolled');
 });
 
 Route::get('/activity/', function () {

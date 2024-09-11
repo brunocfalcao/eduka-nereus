@@ -6,6 +6,8 @@ use Eduka\Nereus\Middleware\WithCourseInSession;
 use Eduka\Payments\Http\Controllers\CheckoutController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Eduka\Nereus\Http\Controllers\EpisodePageController;
+use Eduka\Cube\Models\Episode;
 
 // Show reset password form
 Route::get(
@@ -13,13 +15,20 @@ Route::get(
     [ResetPasswordController::class, 'showResetForm']
 )->name('password.reset');
 
+/* TODO: Figure out why this only works inside of web.php */
+
+/*
 // View an episode (episode / screencast player)
 Route::get(
-    'episode/{episode::uuid}',
-    [EpisodeController::class, 'play']
+    'episodes/{episode:uuid}',
+    function (Episode $episode) {
+        dd($episode);
+    }
 )
-    ->name('episode.play')
-    ->middleware(CanSeeEpisode::class);
+    //->middleware(CanSeeEpisode::class)
+    ->name('episode.play');
+*/
+
 
 Route::get('purchase', CheckoutController::class)
     ->middleware(WithCourseInSession::class)
