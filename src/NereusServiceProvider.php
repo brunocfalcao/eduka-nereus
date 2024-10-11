@@ -11,6 +11,8 @@ use Eduka\Nereus\Middleware\RequestLog;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
 use ProtoneMedia\LaravelPaddle\Api\Api;
+use Illuminate\Support\Facades;
+use Illuminate\View\View;
 
 class NereusServiceProvider extends EdukaServiceProvider
 {
@@ -94,6 +96,10 @@ class NereusServiceProvider extends EdukaServiceProvider
              */
             app()->register($this->backend->service_provider_class);
 
+            // Inject the current backend's course list
+            Facades\View::composer('*', function (View $view) {
+                $view->with('courses', $this->backend->courses);
+            });
             // Frontend?
         } elseif (NereusFacade::matchCourse()) {
             $this->course = NereusFacade::course();

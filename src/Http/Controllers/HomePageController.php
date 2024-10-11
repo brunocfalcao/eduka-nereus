@@ -4,6 +4,7 @@ namespace Eduka\Nereus\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Eduka\Nereus\Facades\Nereus;
+use Illuminate\Support\Facades\Auth;
 
 class HomePageController extends Controller
 {
@@ -20,27 +21,16 @@ class HomePageController extends Controller
 
     public function index()
     {
-        if (Nereus::backend()->courses()->count() == 1) {
-            //dd(Nereus::backend()->courses()->first()->chapters()->with('episodes')->first()->episodes);
-            return view('backend::home-single-course', ['course' => Nereus::backend()->courses()->first()]);
-        } else if (Nereus::backend()->courses()->count() > 1) {
-            return view('backend::home-multiple-courses', ['courses' => Nereus::backend()->courses]);
-        }
+        $course = Nereus::backend()->courses()->first();
 
         // No courses in this backend, this shouldn't happen
-        dd("Error: no courses in this backend");
+        if ($course === null)
+            dd("Error: Backend has no courses");
 
-        // if backend has multiple courses:
-        // backend::home-multiple-courses, pass the courses list (ALL courses)
-        // inside the view:
-        // for course in courses:
-        // for chapter in course->chapters:
-        // if chapter->canBeClickable():
-        // normal
-        // there are episodes the user can access (either free or already purchased)
-        // else:
-        // gray, if they click they get taken to the buy course page
-
-        // bought 1 out of 1 -> show single course
+        return redirect()->route('course.view', ['course' => $course]);
+        /* TODO: Make a home page that lists all courses */
+        /*
+        return view('backend::home');
+        */
     }
 }

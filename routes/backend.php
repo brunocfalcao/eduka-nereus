@@ -1,5 +1,6 @@
 <?php
 
+use Eduka\Nereus\Http\Controllers\ActivityPageController;
 use Eduka\Nereus\Http\Controllers\Auth\ForgotPasswordController;
 use Eduka\Nereus\Http\Controllers\Auth\LoginController;
 use Eduka\Nereus\Http\Controllers\Auth\ResetPasswordController;
@@ -66,14 +67,18 @@ Route::get(
 )->name('password.request')
     ->middleware(ProtectAgainstSpam::class);
 
+
+Route::get(
+    'activity',
+    [ActivityPageController::class, 'index']
+)
+    ->middleware('auth')
+    ->name('activity');
+
 // ---------- TESTING PURPOSES ----
 
 Route::get('/chapters/', function () {
     return view('backend::chapters');
-});
-
-Route::get('/activity/', function () {
-    return view('backend::activity');
 });
 
 Route::get('/profile/', function () {
