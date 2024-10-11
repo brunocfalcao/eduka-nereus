@@ -4,6 +4,7 @@ namespace Eduka\Nereus;
 
 use Eduka\Abstracts\Classes\EdukaServiceProvider;
 use Eduka\Cube\Models\Course;
+use Eduka\Cube\Models\Episode;
 use Eduka\Nereus\Commands\Fresh;
 use Eduka\Nereus\Commands\Migrate;
 use Eduka\Nereus\Facades\Nereus as NereusFacade;
@@ -26,6 +27,8 @@ class NereusServiceProvider extends EdukaServiceProvider
         $this->dir = __DIR__;
 
         $this->loadCommands();
+
+        Route::model('episode', Episode::class);
 
         /**
          * Load forced providers that are configured via the
@@ -220,6 +223,7 @@ class NereusServiceProvider extends EdukaServiceProvider
 
         Route::middleware([
             'web',
+            SubstituteBindings::class,
             RequestLog::class,
         ])
             ->group(function () use ($routesPath) {
