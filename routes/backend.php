@@ -75,13 +75,6 @@ Route::get(
     ->middleware('auth')
     ->name('activity');
 
-Route::get(
-    'episodes/{episode:uuid}',
-    [EpisodePageController::class, 'index']
-)
-    //->middleware(CanSeeEpisode::class)
-    ->name('episode.play');
-
 // ---------- TESTING PURPOSES ----
 
 Route::get('/chapters/', function () {
